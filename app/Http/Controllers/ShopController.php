@@ -7,59 +7,94 @@ use Illuminate\Http\Request;
 use App\Models\Phone;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Category;
 
 class ShopController extends Controller
 {
-    public function home(){
-        $phones = Phone::all();
-        return view('user.home', compact('phones'));
+    public function home(Request $request){
+
+        $categories = Category::all();
+
+        $query = Phone::query();
+
+        if($request->keyword){
+            $query->where('name','like','%'.$request->keyword.'%');
+        }
+
+        if($request->category){
+            $query->where('category_id',$request->category);
+        }
+
+        $phones = $query->paginate(8);
+
+        $featured = Phone::where('is_featured',1)->take(8)->get();
+        $bestSeller = Phone::orderBy('sold','desc')->take(8)->get();
+
+        return view('user.home', compact(
+            'phones','categories','featured','bestSeller'
+        ));
+    }
+
+    public function category($id){
+        $phones = Phone::where('category_id',$id)->get();
+        $categories = Category::all();
+        return view('user.category', compact('phones','categories'));
     }
 
     public function add($id){
         $phone = Phone::findOrFail($id);
-
         $cart = session()->get('cart', []);
 
         if(isset($cart[$id])){
             $cart[$id]['qty']++;
         } else {
             $cart[$id] = [
-                'name' => $phone->name,
-                'price' => $phone->price,
-                'qty' => 1
+                'name'=>$phone->name,
+                'price'=>$phone->price,
+                'image'=>$phone->image,
+                'qty'=>1
             ];
         }
 
-        session()->put('cart', $cart);
+        session()->put('cart',$cart);
         return redirect('/cart');
     }
 
     public function cart(){
-        return view('user.cart');
+        $cart = session('cart', []);
+        return view('user.cart', compact('cart'));
     }
 
-    public function checkout(){
-        $cart = session('cart', []);
-        
-        if(!$cart) return redirect('/');
-        
-        return view('user.checkout');
+    public function updateCart(Request $request,$id){
+        $cart = session()->get('cart', []);
+        if(isset($cart[$id])){
+            $cart[$id]['qty'] = $request->qty;
+        }
+        session()->put('cart',$cart);
+        return redirect('/cart');
     }
 
     public function remove($id){
         $cart = session()->get('cart', []);
+        unset($cart[$id]);
+        session()->put('cart',$cart);
+        return redirect('/cart');
+    }
 
-        if(isset($cart[$id])){
-            unset($cart[$id]);
+    public function checkout(){
+        $cart = session('cart', []);
+        if(!$cart) return redirect('/');
+
+        $total = 0;
+        foreach($cart as $item){
+            $total += $item['price'] * $item['qty'];
         }
 
-        session()->put('cart', $cart);
-        return redirect('/cart');
+        return view('user.checkout', compact('cart','total'));
     }
 
     public function order(Request $request){
         $cart = session('cart');
-
         if(!$cart) return redirect('/');
 
         $total = 0;
@@ -68,19 +103,21 @@ class ShopController extends Controller
         }
 
         $order = Order::create([
-            'user_id' => Auth::id(),
-            'total' => $total,
-            'status' => 'pending',
-            'payment_method' => $request->payment
+            'user_id'=>Auth::id(),
+            'total'=>$total,
+            'status'=>'pending',
+            'payment_method'=>$request->payment
         ]);
 
-        foreach($cart as $id => $item){
+        foreach($cart as $id=>$item){
             OrderItem::create([
-                'order_id' => $order->id,
-                'phone_id' => $id,
-                'quantity' => $item['qty'],
-                'price' => $item['price']
+                'order_id'=>$order->id,
+                'phone_id'=>$id,
+                'quantity'=>$item['qty'],
+                'price'=>$item['price']
             ]);
+
+            Phone::where('id',$id)->increment('sold',$item['qty']);
         }
 
         session()->forget('cart');
@@ -89,7 +126,7 @@ class ShopController extends Controller
     }
 
     public function orders(){
-        $orders = Order::where('user_id', Auth::id())->get();
+        $orders = Order::where('user_id',Auth::id())->latest()->get();
         return view('user.orders', compact('orders'));
     }
 }

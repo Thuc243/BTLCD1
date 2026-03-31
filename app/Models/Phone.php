@@ -10,6 +10,13 @@ class Phone extends Model
         'name',
         'price',
         'image',
-        'description'
+        'description',
+        'category_id',
+        'sold',
+        'is_featured'
     ];
+
+    public function category(){
+        return $this->belongsTo(Category::class);
+    }
 }

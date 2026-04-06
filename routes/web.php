@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
@@ -38,26 +39,27 @@ Route::post('/logout', [LogoutController::class, 'logout'])
 |--------------------------------------------------------------------------
 */
 
-// Trang chủ + tìm kiếm + lọc hãng
-Route::get('/', [ShopController::class, 'home']);
+// 🏠 Trang chủ + tìm kiếm
+Route::get('/', [ShopController::class, 'home'])->name('home');
 
-// Lọc theo hãng
-Route::get('/category/{id}', [ShopController::class, 'category']);
+// 📱 Lọc theo hãng
+Route::get('/category/{id}', [ShopController::class, 'category'])->name('category');
+
 
 Route::middleware('auth')->group(function () {
 
-    // 🛒 Giỏ hàng
-    Route::get('/cart', [ShopController::class, 'cart']);
-    Route::get('/add/{id}', [ShopController::class, 'add']);
-    Route::post('/cart/update/{id}', [ShopController::class, 'updateCart']);
-    Route::get('/remove/{id}', [ShopController::class, 'remove']);
+    // 🛒 GIỎ HÀNG
+    Route::get('/cart', [ShopController::class, 'cart'])->name('cart');
+    Route::get('/add/{id}', [ShopController::class, 'add'])->name('add');
+    Route::post('/cart/update/{id}', [ShopController::class, 'updateCart'])->name('cart.update');
+    Route::get('/remove/{id}', [ShopController::class, 'remove'])->name('remove');
 
-    // 💳 Thanh toán
-    Route::get('/checkout', [ShopController::class, 'checkout']);
-    Route::post('/order', [ShopController::class, 'order']);
+    // 💳 THANH TOÁN
+    Route::get('/checkout', [ShopController::class, 'checkout'])->name('checkout');
+    Route::post('/order', [ShopController::class, 'order'])->name('order');
 
-    // 📦 Đơn hàng
-    Route::get('/orders', [ShopController::class, 'orders']);
+    // 📦 ĐƠN HÀNG
+    Route::get('/orders', [ShopController::class, 'orders'])->name('orders');
 });
 
 
@@ -66,20 +68,27 @@ Route::middleware('auth')->group(function () {
 | ADMIN (BACKEND)
 |--------------------------------------------------------------------------
 */
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
-    // 📊 Dashboard
-    Route::get('/', [AdminController::class, 'dashboard']);
+    // 📊 DASHBOARD
+    Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-    // 📱 Quản lý sản phẩm
-    Route::get('/phones', [AdminController::class, 'phones']);
-    Route::get('/phones/create', [AdminController::class, 'create']);
-    Route::post('/phones/store', [AdminController::class, 'store']);
-    Route::get('/phones/delete/{id}', [AdminController::class, 'delete']);
+    // 📱 SẢN PHẨM
+    Route::get('/phones', [AdminController::class, 'phones'])->name('admin.phones');
 
-    // 📦 Đơn hàng
-    Route::get('/orders', [AdminController::class, 'orders']);
+    Route::get('/phones/create', [AdminController::class, 'create'])->name('admin.phones.create');
+    Route::post('/phones/store', [AdminController::class, 'store'])->name('admin.phones.store');
 
-    // 👥 Người dùng
-    Route::get('/users', [AdminController::class, 'users']);
+    Route::get('/phones/edit/{id}', [AdminController::class, 'edit'])->name('admin.phones.edit');
+    Route::post('/phones/update/{id}', [AdminController::class, 'update'])->name('admin.phones.update');
+
+    Route::get('/phones/delete/{id}', [AdminController::class, 'delete'])->name('admin.phones.delete');
+
+    // 📦 ĐƠN HÀNG
+    Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders');
+    Route::get('/orders/status/{id}/{status}', [AdminController::class, 'updateOrderStatus'])->name('admin.orders.status');
+    Route::get('/orders/delete/{id}', [AdminController::class, 'deleteOrder'])->name('admin.orders.delete');
+
+    // 👥 NGƯỜI DÙNG
+    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
 });

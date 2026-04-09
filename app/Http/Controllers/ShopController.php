@@ -25,7 +25,7 @@ class ShopController extends Controller
             $query->where('category_id',$request->category);
         }
 
-        $phones = $query->paginate(8);
+        $phones = $query->paginate(12);
 
         $featured = Phone::where('is_featured',1)->take(8)->get();
         $bestSeller = Phone::orderBy('sold','desc')->take(8)->get();
@@ -35,10 +35,21 @@ class ShopController extends Controller
         ));
     }
 
+    public function detail($id){
+        $phone = Phone::with('category')->findOrFail($id);
+        $related = Phone::where('category_id', $phone->category_id)
+                        ->where('id', '!=', $id)
+                        ->take(4)
+                        ->get();
+        $categories = Category::all();
+        return view('user.detail', compact('phone', 'related', 'categories'));
+    }
+
     public function category($id){
+        $cat = Category::findOrFail($id);
         $phones = Phone::where('category_id',$id)->get();
         $categories = Category::all();
-        return view('user.category', compact('phones','categories'));
+        return view('user.category', compact('phones','categories','cat'));
     }
 
     public function add($id){
@@ -57,18 +68,19 @@ class ShopController extends Controller
         }
 
         session()->put('cart',$cart);
-        return redirect('/cart');
+        return redirect()->back()->with('cart_success', 'Đã thêm "'.$phone->name.'" vào giỏ hàng!');
     }
 
     public function cart(){
         $cart = session('cart', []);
-        return view('user.cart', compact('cart'));
+        $categories = Category::all();
+        return view('user.cart', compact('cart', 'categories'));
     }
 
     public function updateCart(Request $request,$id){
         $cart = session()->get('cart', []);
         if(isset($cart[$id])){
-            $cart[$id]['qty'] = $request->qty;
+            $cart[$id]['qty'] = max(1, $request->qty);
         }
         session()->put('cart',$cart);
         return redirect('/cart');
@@ -90,12 +102,20 @@ class ShopController extends Controller
             $total += $item['price'] * $item['qty'];
         }
 
-        return view('user.checkout', compact('cart','total'));
+        $categories = Category::all();
+        return view('user.checkout', compact('cart','total','categories'));
     }
 
     public function order(Request $request){
         $cart = session('cart');
         if(!$cart) return redirect('/');
+
+        $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
+            'address' => 'required|string|max:500',
+            'payment' => 'required|in:COD,QR',
+        ]);
 
         $total = 0;
         foreach($cart as $item){
@@ -104,6 +124,9 @@ class ShopController extends Controller
 
         $order = Order::create([
             'user_id'=>Auth::id(),
+            'customer_name'=>$request->customer_name,
+            'phone_number'=>$request->phone_number,
+            'address'=>$request->address,
             'total'=>$total,
             'status'=>'pending',
             'payment_method'=>$request->payment
@@ -122,11 +145,12 @@ class ShopController extends Controller
 
         session()->forget('cart');
 
-        return redirect('/orders');
+        return redirect('/orders')->with('success', 'Đặt hàng thành công! Mã đơn hàng: #ORD-'.$order->id);
     }
 
     public function orders(){
-        $orders = Order::where('user_id',Auth::id())->latest()->get();
-        return view('user.orders', compact('orders'));
+        $orders = Order::with(['items.phone'])->where('user_id',Auth::id())->latest()->get();
+        $categories = Category::all();
+        return view('user.orders', compact('orders', 'categories'));
     }
 }

@@ -3,14 +3,14 @@
 @section('content')
 
 <div class="mb-4">
-    <h4 class="fw-bold mb-0">Quản lý Đơn hàng</h4>
-    <p class="text-muted small">Theo dõi và cập nhật trạng thái đơn hàng từ khách hàng.</p>
+    <h5 class="fw-bold mb-1">Quản lý Đơn hàng</h5>
+    <p class="text-muted small mb-0">Theo dõi và cập nhật trạng thái đơn hàng từ khách hàng.</p>
 </div>
 
-<div class="card border-0 shadow-sm overflow-hidden">
+<div class="card overflow-hidden">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="bg-light">
+        <table class="table table-hover align-middle">
+            <thead>
                 <tr>
                     <th class="ps-4">Mã ĐH</th>
                     <th>Khách hàng</th>
@@ -22,61 +22,76 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($orders as $o)
+                @forelse($orders as $o)
                 <tr>
-                    <td class="ps-4 text-muted small">#ORD-{{ $o->id }}</td>
-                    <td>
-                        <div class="fw-bold">{{ $o->user->name }}</div>
-                        <div class="text-muted small">{{ $o->user->email }}</div>
+                    <td class="ps-4">
+                        <div class="fw-bold" style="font-size: 13px;">#ORD-{{ str_pad($o->id, 5, '0', STR_PAD_LEFT) }}</div>
+                        <div class="text-muted" style="font-size: 11px;">{{ $o->created_at->format('H:i d/m/Y') }}</div>
                     </td>
                     <td>
-                        <div class="small">
+                        <div class="fw-semibold" style="font-size: 13px;">{{ $o->user->name ?? 'N/A' }}</div>
+                        <div class="text-muted" style="font-size: 11px;">{{ $o->user->email ?? '' }}</div>
+                        @if($o->phone_number)
+                            <div class="text-muted" style="font-size: 11px;">📞 {{ $o->phone_number }}</div>
+                        @endif
+                    </td>
+                    <td>
+                        <div style="font-size: 12px; max-width: 200px;">
                             @foreach($o->items as $item)
-                                <div class="mb-1 text-nowrap">• {{ $item->phone->name }} (x{{ $quantity ?? $item->quantity }})</div>
+                                <div class="mb-1 text-truncate">• {{ $item->phone->name ?? 'Đã xóa' }} <span class="text-muted">(x{{ $item->quantity }})</span></div>
                             @endforeach
                         </div>
                     </td>
                     <td>
-                        <div class="fw-bold text-primary">{{ number_format($o->total, 0, ',', '.') }}đ</div>
-                        <div class="text-muted small">{{ $o->created_at->format('H:i d/m') }}</div>
+                        <div class="fw-bold" style="color: var(--primary);">{{ number_format($o->total, 0, ',', '.') }}₫</div>
                     </td>
                     <td>
-                        <span class="badge bg-info bg-opacity-10 text-info text-uppercase border border-info border-opacity-25">{{ $o->payment_method }}</span>
+                        <span class="badge rounded-pill" style="background: #eff6ff; color: #2563eb; border: 1px solid #93c5fd; font-size: 11px;">
+                            {{ $o->payment_method == 'COD' ? '💵 COD' : '📱 QR' }}
+                        </span>
                     </td>
                     <td>
                         @if($o->status == 'pending')
-                            <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 border border-warning border-opacity-25">Đang chờ</span>
+                            <span class="badge rounded-pill" style="background: #fef3c7; color: #d97706; border: 1px solid #fbbf24;">⏳ Đang chờ</span>
                         @elseif($o->status == 'completed')
-                            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 border border-success border-opacity-25">Hoàn tất</span>
+                            <span class="badge rounded-pill" style="background: #d1fae5; color: #059669; border: 1px solid #34d399;">✅ Hoàn tất</span>
                         @else
-                            <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 border border-danger border-opacity-25">Đã hủy</span>
+                            <span class="badge rounded-pill" style="background: #fee2e2; color: #dc2626; border: 1px solid #f87171;">❌ Đã hủy</span>
                         @endif
                     </td>
                     <td class="text-end pe-4">
                         <div class="dropdown">
-                            <button class="btn btn-light btn-sm border dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <button class="btn btn-light btn-sm border rounded-pill px-3 dropdown-toggle" type="button" data-bs-toggle="dropdown" style="font-size: 12px;">
                                 Xử lý
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: 12px; padding: 6px;">
                                 @if($o->status != 'completed')
-                                    <li><a class="dropdown-item text-success d-flex align-items-center gap-2" href="{{ route('admin.orders.status', [$o->id, 'completed']) }}">
-                                        <i data-lucide="check-circle" size="16"></i> Hoàn tất ĐH
+                                    <li><a class="dropdown-item rounded d-flex align-items-center gap-2 py-2" style="font-size: 13px; color: #059669;" href="{{ route('admin.orders.status', [$o->id, 'completed']) }}">
+                                        <i data-lucide="check-circle" size="15"></i> Hoàn tất
                                     </a></li>
                                 @endif
                                 @if($o->status != 'cancelled')
-                                    <li><a class="dropdown-item text-warning d-flex align-items-center gap-2" href="{{ route('admin.orders.status', [$o->id, 'cancelled']) }}">
-                                        <i data-lucide="x-circle" size="16"></i> Hủy đơn hàng
+                                    <li><a class="dropdown-item rounded d-flex align-items-center gap-2 py-2" style="font-size: 13px; color: #d97706;" href="{{ route('admin.orders.status', [$o->id, 'cancelled']) }}">
+                                        <i data-lucide="x-circle" size="15"></i> Hủy đơn
                                     </a></li>
                                 @endif
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger d-flex align-items-center gap-2" href="{{ route('admin.orders.delete', $o->id) }}" onclick="return confirm('Bạn có chắc muốn xóa vĩnh viễn đơn hàng này?')">
-                                    <i data-lucide="trash-2" size="16"></i> Xóa đơn hàng
+                                <li><a class="dropdown-item rounded d-flex align-items-center gap-2 py-2" style="font-size: 13px; color: #dc2626;" 
+                                    href="{{ route('admin.orders.delete', $o->id) }}" onclick="return confirm('Xóa vĩnh viễn đơn hàng này?')">
+                                    <i data-lucide="trash-2" size="15"></i> Xóa
                                 </a></li>
                             </ul>
                         </div>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">
+                        <i data-lucide="inbox" size="40" class="mb-2 opacity-25"></i>
+                        <p>Chưa có đơn hàng nào.</p>
+                    </td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

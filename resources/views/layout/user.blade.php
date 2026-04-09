@@ -3,235 +3,572 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Phone Shop Premium</title>
+    <title>Phone Shop - Điện thoại chính hãng giá tốt</title>
+    <meta name="description" content="Phone Shop - Cửa hàng điện thoại chính hãng, giá tốt nhất thị trường. iPhone, Samsung, Xiaomi, OPPO, Vivo.">
 
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Lucide Icons (CDN) -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         :root {
-            --primary: #003b73;
-            --secondary: #0074d9;
-            --accent: #ffd400;
-            --text-dark: #1a1a1a;
-            --bg-light: #f8f9fa;
+            --primary: #1a1a2e;
+            --primary-light: #16213e;
+            --secondary: #0f3460;
+            --accent: #e94560;
+            --accent-light: #ff6b81;
+            --gold: #f59e0b;
+            --text-dark: #0f0f0f;
+            --text-muted: #6b7280;
+            --bg-body: #f4f6fb;
+            --bg-white: #ffffff;
+            --border-light: #e5e7eb;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
+            --shadow-hover: 0 15px 40px rgba(0,0,0,0.15);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        body { 
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-light);
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-body);
             color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Header */
-        .glass-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+        /* ═══════════════════════════ HEADER ═══════════════════════════ */
+        .main-header {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 1050;
+            padding: 0;
+            transition: var(--transition);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             padding: 12px 0;
+            gap: 20px;
         }
 
         .logo {
-            font-weight: 800;
-            font-size: 24px;
+            font-weight: 900;
+            font-size: 22px;
             color: var(--primary);
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 8px;
+            white-space: nowrap;
+            transition: var(--transition);
         }
 
-        .search-box {
+        .logo:hover { color: var(--accent); }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--accent), #ff8a5c);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* Search Box */
+        .search-wrapper {
+            flex: 1;
+            max-width: 520px;
             position: relative;
-            max-width: 500px;
+        }
+
+        .search-wrapper input {
             width: 100%;
+            height: 44px;
+            border: 2px solid var(--border-light);
+            border-radius: 50px;
+            padding: 0 20px 0 46px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg-body);
+            transition: var(--transition);
+            outline: none;
         }
 
-        .search-box input {
-            border-radius: 25px;
-            padding-left: 45px;
-            border: 1px solid #ddd;
-            height: 45px;
-            transition: 0.3s;
+        .search-wrapper input:focus {
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(233,69,96,0.1);
         }
 
-        .search-box input:focus {
-            box-shadow: 0 0 0 3px rgba(0, 116, 217, 0.1);
-            border-color: var(--secondary);
-        }
-
-        .search-box i {
+        .search-wrapper .search-icon {
             position: absolute;
-            left: 15px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: #888;
+            color: var(--text-muted);
+            pointer-events: none;
         }
 
-        /* Mega Menu */
-        .category-nav {
-            background: white;
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
-        }
-
-        .category-nav a {
-            color: #555;
-            text-decoration: none;
-            font-weight: 500;
-            margin: 0 15px;
-            transition: 0.2s;
-            font-size: 14px;
-            text-transform: uppercase;
-        }
-
-        .category-nav a:hover {
-            color: var(--secondary);
-        }
-
-        /* Cart Badge */
-        .btn-cart {
-            position: relative;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-        }
-
-        .btn-cart:hover {
-            background: var(--secondary);
-            transform: scale(1.05);
-            color: white;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ff4d4d;
-            color: white;
-            font-size: 10px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            border: 2px solid white;
-        }
-
-        /* Banner */
-        .premium-banner {
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-
-        /* General UI */
-        .section-title {
-            font-weight: 700;
-            margin-bottom: 25px;
+        /* Header Actions */
+        .header-actions {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .section-title::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #eee;
+        .btn-icon {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid var(--border-light);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: var(--transition);
         }
 
-        .footer {
-            background: #1a1a1a;
-            color: #aaa;
-            padding: 50px 0;
-            margin-top: 50px;
+        .btn-icon:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--accent);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        .btn-auth {
+            height: 42px;
+            padding: 0 22px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(26,26,46,0.3);
+            color: white;
+        }
+
+        .user-dropdown .dropdown-toggle {
+            height: 42px;
+            padding: 0 16px;
+            border-radius: 50px;
+            border: 2px solid var(--border-light);
+            background: white;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .user-dropdown .dropdown-toggle:hover {
+            border-color: var(--accent);
+        }
+
+        .user-dropdown .dropdown-toggle::after { margin-left: 4px; }
+
+        .user-dropdown .dropdown-menu {
+            border: none;
+            box-shadow: var(--shadow-lg);
+            border-radius: var(--radius-sm);
+            padding: 8px;
+            min-width: 200px;
+        }
+
+        .user-dropdown .dropdown-item {
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .user-dropdown .dropdown-item:hover { background: var(--bg-body); }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #ff8a5c);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        /* ═══════════════════════════ CATEGORY NAV ═══════════════════════════ */
+        .category-strip {
+            background: white;
+            border-bottom: 1px solid var(--border-light);
+            padding: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .category-strip::-webkit-scrollbar { display: none; }
+
+        .category-strip-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px 0;
+            min-width: max-content;
+        }
+
+        .cat-link {
+            padding: 8px 18px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: var(--transition);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cat-link:hover, .cat-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ═══════════════════════════ SECTION TITLES ═══════════════════════════ */
+        .section-heading {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-heading .icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .section-heading::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(to right, var(--border-light), transparent);
+            margin-left: 10px;
+        }
+
+        /* ═══════════════════════════ PAGINATION ═══════════════════════════ */
+        nav[aria-label="Pagination Navigation"] { display: flex; justify-content: center; }
+        .pagination { gap: 6px; flex-wrap: wrap; justify-content: center; }
+        .page-item .page-link {
+            width: 40px; height: 40px;
+            border-radius: 10px !important;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 14px;
+            border: 2px solid var(--border-light);
+            color: var(--text-dark);
+            transition: var(--transition);
+            padding: 0;
+            font-family: inherit;
+        }
+        .page-item .page-link:hover {
+            background: var(--primary); color: white; border-color: var(--primary);
+            transform: translateY(-2px); box-shadow: 0 4px 12px rgba(26,26,46,0.2);
+        }
+        .page-item.active .page-link {
+            background: var(--primary) !important; border-color: var(--primary) !important;
+            color: white !important; font-weight: 700;
+            box-shadow: 0 4px 12px rgba(26,26,46,0.2);
+        }
+        .page-item.disabled .page-link {
+            background: var(--bg-body); color: #ccc; border-color: var(--border-light);
+        }
+        .page-item:first-child .page-link,
+        .page-item:last-child .page-link { width: auto; padding: 0 14px; }
+
+        /* ═══════════════════════════ TOAST ═══════════════════════════ */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .custom-toast {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 16px 24px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            border-left: 4px solid #10b981;
+            animation: slideInRight 0.4s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ═══════════════════════════ FOOTER ═══════════════════════════ */
+        .main-footer {
+            background: var(--primary);
+            color: rgba(255,255,255,0.7);
+            padding: 60px 0 0;
+            margin-top: 60px;
+        }
+
+        .footer-brand {
+            font-weight: 900;
+            font-size: 24px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .footer-desc {
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .footer-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: white;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li { margin-bottom: 10px; }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 4px;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+            font-size: 14px;
+        }
+
+        .footer-contact-item i { color: var(--accent); margin-top: 2px; }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 20px 0;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        /* ═══════════════════════════ SCROLL TO TOP ═══════════════════════════ */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #ff8a5c);
+            color: white;
+            border: none;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(233,69,96,0.4);
+            transition: var(--transition);
+        }
+
+        .scroll-top:hover { transform: translateY(-4px); }
+        .scroll-top.show { display: flex; }
+
+        /* ═══════════════════════════ RESPONSIVE ═══════════════════════════ */
+        @media (max-width: 768px) {
+            .search-wrapper { display: none; }
+            .header-inner { padding: 10px 0; }
+            .logo { font-size: 18px; }
         }
     </style>
 </head>
 
 <body>
 
+<!-- TOAST NOTIFICATIONS -->
+@if(session('cart_success'))
+<div class="toast-container">
+    <div class="custom-toast" id="cartToast">
+        <i data-lucide="check-circle" size="20" style="color: #10b981;"></i>
+        <span>{{ session('cart_success') }}</span>
+    </div>
+</div>
+@endif
+
 <!-- HEADER -->
-<header class="glass-header">
-    <div class="container d-flex justify-content-between align-items-center">
-        
-        <!-- LOGO -->
-        <a href="{{ route('home') }}" class="logo">
-            <i data-lucide="smartphone"></i>
-            <span>iPHONE STORE</span>
-        </a>
-
-        <!-- SEARCH -->
-        <form method="GET" action="{{ route('home') }}" class="search-box d-none d-md-block">
-            <i data-lucide="search" size="18"></i>
-            <input type="text" name="keyword" class="form-control" placeholder="Bạn cần tìm iPhone, Samsung..." value="{{ request('keyword') }}">
-        </form>
-
-        <!-- ACTIONS -->
-        <div class="d-flex align-items-center gap-3">
-            
-            <a href="{{ route('cart') }}" class="btn-cart">
-                <i data-lucide="shopping-cart" size="20"></i>
-                @if(session('cart'))
-                    <span class="cart-count">{{ count(session('cart')) }}</span>
-                @endif
+<header class="main-header">
+    <div class="container">
+        <div class="header-inner">
+            <!-- Logo -->
+            <a href="{{ route('home') }}" class="logo">
+                <div class="logo-icon">
+                    <i data-lucide="smartphone" size="20"></i>
+                </div>
+                <span>PHONE SHOP</span>
             </a>
 
-            <div class="dropdown">
+            <!-- Search -->
+            <form method="GET" action="{{ route('home') }}" class="search-wrapper">
+                <i data-lucide="search" size="18" class="search-icon"></i>
+                <input type="text" name="keyword" placeholder="Tìm kiếm iPhone, Samsung, Xiaomi..." value="{{ request('keyword') }}">
+            </form>
+
+            <!-- Actions -->
+            <div class="header-actions">
+                <a href="{{ route('cart') }}" class="btn-icon" title="Giỏ hàng">
+                    <i data-lucide="shopping-bag" size="18"></i>
+                    @if(session('cart'))
+                        <span class="cart-badge">{{ count(session('cart')) }}</span>
+                    @endif
+                </a>
+
                 @auth
-                    <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        Chào, {{ auth()->user()->name }}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        @if(auth()->user()->role == 'admin')
-                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Hệ thống quản trị</a></li>
-                        @endif
-                        <li><a class="dropdown-item" href="{{ route('orders') }}">Đơn hàng của tôi</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button class="dropdown-item text-danger">Đăng xuất</button>
-                            </form>
-                        </li>
-                    </ul>
+                    <div class="dropdown user-dropdown">
+                        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <div class="user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                            <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            @if(auth()->user()->role == 'admin')
+                                <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                    <i data-lucide="shield" size="16" class="me-2"></i>Quản trị
+                                </a></li>
+                            @endif
+                            <li><a class="dropdown-item" href="{{ route('orders') }}">
+                                <i data-lucide="package" size="16" class="me-2"></i>Đơn hàng
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button class="dropdown-item text-danger">
+                                        <i data-lucide="log-out" size="16" class="me-2"></i>Đăng xuất
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 @else
-                    <a href="{{ route('login') }}" class="btn btn-dark px-4">Đăng nhập</a>
+                    <a href="{{ route('login') }}" class="btn-auth">
+                        <i data-lucide="user" size="16"></i>
+                        <span>Đăng nhập</span>
+                    </a>
                 @endauth
             </div>
-
         </div>
     </div>
 </header>
 
-<!-- CATEGORY NAV -->
-<nav class="category-nav d-none d-md-block">
-    <div class="container d-flex justify-content-center">
-        <a href="{{ route('home') }}">Tất cả</a>
-        @if(isset($categories))
-            @foreach($categories as $c)
-                <a href="{{ route('category', $c->id) }}">{{ $c->name }}</a>
-            @endforeach
-        @endif
+<!-- CATEGORY STRIP -->
+<nav class="category-strip">
+    <div class="container">
+        <div class="category-strip-inner">
+            <a href="{{ route('home') }}" class="cat-link {{ !request('category') && request()->is('/') ? 'active' : '' }}">
+                <i data-lucide="layers" size="14"></i> Tất cả
+            </a>
+            @if(isset($categories))
+                @foreach($categories as $c)
+                    <a href="{{ route('category', $c->id) }}" class="cat-link {{ request()->is('category/'.$c->id) ? 'active' : '' }}">
+                        {{ $c->name }}
+                    </a>
+                @endforeach
+            @endif
+        </div>
     </div>
 </nav>
 
@@ -240,17 +577,93 @@
     @yield('content')
 </main>
 
-<footer class="footer">
-    <div class="container text-center">
-        <p class="mb-2">© 2026 iPHONE STORE - Premium Experience</p>
-        <span class="text-muted small">Designed with ❤️ for premium customers.</span>
+<!-- FOOTER -->
+<footer class="main-footer">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="footer-brand">
+                    <div class="logo-icon">
+                        <i data-lucide="smartphone" size="18"></i>
+                    </div>
+                    PHONE SHOP
+                </div>
+                <p class="footer-desc">
+                    Cửa hàng điện thoại chính hãng uy tín hàng đầu Việt Nam. 
+                    Cam kết 100% sản phẩm nguyên seal, bảo hành chính hãng với giá tốt nhất thị trường.
+                </p>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <h6 class="footer-title">Liên kết</h6>
+                <ul class="footer-links">
+                    <li><a href="{{ route('home') }}"><i data-lucide="chevron-right" size="14"></i>Trang chủ</a></li>
+                    <li><a href="{{ route('cart') }}"><i data-lucide="chevron-right" size="14"></i>Giỏ hàng</a></li>
+                    <li><a href="{{ route('orders') }}"><i data-lucide="chevron-right" size="14"></i>Đơn hàng</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <h6 class="footer-title">Danh mục</h6>
+                <ul class="footer-links">
+                    @if(isset($categories))
+                        @foreach($categories->take(5) as $c)
+                        <li><a href="{{ route('category', $c->id) }}"><i data-lucide="chevron-right" size="14"></i>{{ $c->name }}</a></li>
+                        @endforeach
+                    @endif
+                </ul>
+            </div>
+            <div class="col-lg-4 col-md-4">
+                <h6 class="footer-title">Liên hệ</h6>
+                <div class="footer-contact-item">
+                    <i data-lucide="map-pin" size="16"></i>
+                    <span>123 Đường Nguyễn Huệ, Quận 1, TP.HCM</span>
+                </div>
+                <div class="footer-contact-item">
+                    <i data-lucide="phone" size="16"></i>
+                    <span>0337 312 919</span>
+                </div>
+                <div class="footer-contact-item">
+                    <i data-lucide="mail" size="16"></i>
+                    <span>contact@phoneshop.vn</span>
+                </div>
+                <div class="footer-contact-item">
+                    <i data-lucide="clock" size="16"></i>
+                    <span>8:00 - 21:00 (Thứ 2 - CN)</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 PHONE SHOP. All rights reserved. Designed with ❤️ by Mai Anh Thức.
+        </div>
     </div>
 </footer>
+
+<!-- SCROLL TO TOP -->
+<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <i data-lucide="chevron-up" size="22"></i>
+</button>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     lucide.createIcons();
+
+    // Scroll to top button
+    window.addEventListener('scroll', () => {
+        const btn = document.getElementById('scrollTopBtn');
+        if (window.scrollY > 400) btn.classList.add('show');
+        else btn.classList.remove('show');
+    });
+
+    // Auto-hide toast
+    const toast = document.getElementById('cartToast');
+    if (toast) {
+        setTimeout(() => {
+            toast.style.transition = 'all 0.4s ease';
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.parentElement.remove(), 400);
+        }, 3000);
+    }
 </script>
 </body>
 </html>

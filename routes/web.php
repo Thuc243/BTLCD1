@@ -42,7 +42,10 @@ Route::post('/logout', [LogoutController::class, 'logout'])
 // 🏠 Trang chủ + tìm kiếm
 Route::get('/', [ShopController::class, 'home'])->name('home');
 
-// 📱 Lọc theo hãng
+// 📱 Chi tiết sản phẩm
+Route::get('/product/{id}', [ShopController::class, 'detail'])->name('product.detail');
+
+// 📂 Lọc theo hãng
 Route::get('/category/{id}', [ShopController::class, 'category'])->name('category');
 
 
@@ -83,6 +86,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('/phones/update/{id}', [AdminController::class, 'update'])->name('admin.phones.update');
 
     Route::get('/phones/delete/{id}', [AdminController::class, 'delete'])->name('admin.phones.delete');
+
+    // 📁 DANH MỤC
+    Route::get('/categories', [AdminController::class, 'categories'])->name('admin.categories');
+    Route::post('/categories/store', [AdminController::class, 'storeCategory'])->name('admin.categories.store');
+    Route::post('/categories/update/{id}', [AdminController::class, 'updateCategory'])->name('admin.categories.update');
+    Route::get('/categories/delete/{id}', [AdminController::class, 'deleteCategory'])->name('admin.categories.delete');
 
     // 📦 ĐƠN HÀNG
     Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders');

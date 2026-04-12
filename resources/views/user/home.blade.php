@@ -106,10 +106,8 @@
         </div>
     @endif
 
-    <!-- Pagination -->
-    <div class="d-flex justify-content-center mt-4">
-        {{ $phones->appends(request()->query())->links() }}
-    </div>
+    {{-- Pagination --}}
+    {{ $phones->appends(request()->query())->links('vendor.pagination.custom') }}
 </section>
 
 <!-- SCROLL ANIMATION -->

@@ -95,9 +95,7 @@
     </div>
 </div>
 
-<!-- Pagination -->
-<div class="d-flex justify-content-center mt-4">
-    {{ $phones->links() }}
-</div>
+{{-- Pagination --}}
+{{ $phones->appends(request()->query())->links('vendor.pagination.custom') }}
 
 @endsection

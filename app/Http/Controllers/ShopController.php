@@ -8,6 +8,7 @@ use App\Models\Phone;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Category;
+use App\Models\Review;
 
 class ShopController extends Controller
 {
@@ -42,7 +43,36 @@ class ShopController extends Controller
                         ->take(4)
                         ->get();
         $categories = Category::all();
-        return view('user.detail', compact('phone', 'related', 'categories'));
+
+        // Load reviews gốc (không phải reply) kèm replies và user
+        $reviews = Review::with(['user', 'replies.user'])
+                    ->where('phone_id', $id)
+                    ->whereNull('parent_id')
+                    ->latest()
+                    ->get();
+
+        // Tính thống kê đánh giá
+        $avgRating = $phone->avgRating();
+        $reviewCount = $phone->reviewCount();
+        $ratingDistribution = [];
+        for ($i = 5; $i >= 1; $i--) {
+            $count = Review::where('phone_id', $id)->whereNull('parent_id')->where('rating', $i)->count();
+            $ratingDistribution[$i] = $count;
+        }
+
+        // Kiểm tra user đã đánh giá chưa
+        $userReview = null;
+        if (Auth::check()) {
+            $userReview = Review::where('phone_id', $id)
+                            ->where('user_id', Auth::id())
+                            ->whereNull('parent_id')
+                            ->first();
+        }
+
+        return view('user.detail', compact(
+            'phone', 'related', 'categories',
+            'reviews', 'avgRating', 'reviewCount', 'ratingDistribution', 'userReview'
+        ));
     }
 
     public function category($id){
@@ -152,5 +182,73 @@ class ShopController extends Controller
         $orders = Order::with(['items.phone'])->where('user_id',Auth::id())->latest()->get();
         $categories = Category::all();
         return view('user.orders', compact('orders', 'categories'));
+    }
+
+    /**
+     * Lưu đánh giá + bình luận sản phẩm
+     */
+    public function storeReview(Request $request, $phoneId){
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'content' => 'required|string|min:5|max:1000',
+        ]);
+
+        // Kiểm tra đã đánh giá chưa
+        $existing = Review::where('phone_id', $phoneId)
+                        ->where('user_id', Auth::id())
+                        ->whereNull('parent_id')
+                        ->first();
+
+        if ($existing) {
+            // Cập nhật đánh giá cũ
+            $existing->update([
+                'rating' => $request->rating,
+                'content' => $request->content,
+            ]);
+            return redirect()->back()->with('review_success', 'Đã cập nhật đánh giá của bạn!');
+        }
+
+        Review::create([
+            'phone_id' => $phoneId,
+            'user_id' => Auth::id(),
+            'rating' => $request->rating,
+            'content' => $request->content,
+        ]);
+
+        return redirect()->back()->with('review_success', 'Cảm ơn bạn đã đánh giá sản phẩm!');
+    }
+
+    /**
+     * Trả lời bình luận
+     */
+    public function replyReview(Request $request, $reviewId){
+        $request->validate([
+            'content' => 'required|string|min:2|max:1000',
+        ]);
+
+        $parent = Review::findOrFail($reviewId);
+
+        Review::create([
+            'phone_id' => $parent->phone_id,
+            'user_id' => Auth::id(),
+            'parent_id' => $reviewId,
+            'content' => $request->content,
+        ]);
+
+        return redirect()->back()->with('review_success', 'Đã gửi phản hồi!');
+    }
+
+    /**
+     * Xóa bình luận (chủ sở hữu hoặc admin)
+     */
+    public function deleteReview($id){
+        $review = Review::findOrFail($id);
+
+        if (Auth::id() !== $review->user_id && auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $review->delete(); // cascade xóa replies
+        return redirect()->back()->with('review_success', 'Đã xóa bình luận!');
     }
 }

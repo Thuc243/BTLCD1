@@ -7,6 +7,7 @@ use App\Models\Phone;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Category;
+use App\Models\Review;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -17,6 +18,35 @@ class AdminController extends Controller
         $pendingOrders = Order::where('status', 'pending')->count();
         $recentOrders = Order::with('user')->latest()->take(5)->get();
         $topProducts = Phone::orderBy('sold', 'desc')->take(5)->get();
+
+        // Thống kê hôm nay
+        $todayOrders = Order::whereDate('created_at', today())->count();
+        $todayRevenue = Order::where('status', 'completed')->whereDate('created_at', today())->sum('total');
+
+        // Tổng đánh giá
+        $totalReviews = Review::whereNull('parent_id')->count();
+        $avgAllRating = Review::whereNull('parent_id')->whereNotNull('rating')->avg('rating') ?? 0;
+
+        // Tỷ lệ hoàn thành đơn
+        $totalOrders = Order::count();
+        $completedOrders = Order::where('status', 'completed')->count();
+        $cancelledOrders = Order::where('status', 'cancelled')->count();
+        $completionRate = $totalOrders > 0 ? round(($completedOrders / $totalOrders) * 100, 1) : 0;
+
+        // Tổng sản phẩm đã bán
+        $totalSold = Phone::sum('sold');
+
+        // Đánh giá gần đây
+        $recentReviews = Review::with(['user', 'phone'])
+                        ->whereNull('parent_id')
+                        ->latest()
+                        ->take(5)
+                        ->get();
+
+        // Top sản phẩm đánh giá cao nhất
+        $topRatedProducts = Phone::withCount(['reviews as avg_rating' => function($q) {
+            $q->whereNull('parent_id')->whereNotNull('rating')->select(DB::raw('coalesce(avg(rating), 0)'));
+        }])->orderByDesc('avg_rating')->take(5)->get();
 
         // Dữ liệu biểu đồ doanh thu 7 ngày gần nhất
         $chartLabels = [];
@@ -29,9 +59,16 @@ class AdminController extends Controller
                                 ->sum('total');
         }
 
+        // Phân bố trạng thái đơn hàng
+        $orderStatusData = [
+            'pending' => $pendingOrders,
+            'completed' => $completedOrders,
+            'cancelled' => $cancelledOrders,
+        ];
+
         return view('admin.dashboard', [
             'phones' => Phone::count(),
-            'orders' => Order::count(),
+            'orders' => $totalOrders,
             'users' => User::count(),
             'totalRevenue' => $totalRevenue,
             'pendingOrders' => $pendingOrders,
@@ -39,6 +76,17 @@ class AdminController extends Controller
             'topProducts' => $topProducts,
             'chartLabels' => json_encode($chartLabels),
             'chartData' => json_encode($chartData),
+            // Mới thêm
+            'todayOrders' => $todayOrders,
+            'todayRevenue' => $todayRevenue,
+            'totalReviews' => $totalReviews,
+            'avgAllRating' => $avgAllRating,
+            'completionRate' => $completionRate,
+            'completedOrders' => $completedOrders,
+            'cancelledOrders' => $cancelledOrders,
+            'totalSold' => $totalSold,
+            'recentReviews' => $recentReviews,
+            'orderStatusData' => json_encode(array_values($orderStatusData)),
         ]);
     }
 

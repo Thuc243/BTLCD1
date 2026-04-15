@@ -76,7 +76,8 @@
             </h6>
             <div class="card-meta">
                 <span class="card-sold"><i data-lucide="flame" size="12"></i> Đã bán {{ number_format($p->sold) }}</span>
-                <span class="card-rating"><i data-lucide="star" size="12" fill="currentColor" stroke="none"></i> 4.{{ rand(5,9) }}</span>
+                @php $cardRating = $p->avgRating(); @endphp
+                <span class="card-rating"><i data-lucide="star" size="12" fill="currentColor" stroke="none"></i> {{ $cardRating > 0 ? number_format($cardRating, 1) : '0.0' }}</span>
             </div>
             <div class="card-price">{{ number_format($p->price, 0, ',', '.') }}₫</div>
             <a href="{{ route('add', $p->id) }}" class="btn-add-cart">

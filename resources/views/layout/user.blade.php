@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Phone Shop - Điện thoại chính hãng giá tốt</title>
     <meta name="description" content="Phone Shop - Cửa hàng điện thoại chính hãng, giá tốt nhất thị trường. iPhone, Samsung, Xiaomi, OPPO, Vivo.">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -556,6 +557,15 @@
 </div>
 @endif
 
+@if(session('review_success'))
+<div class="toast-container">
+    <div class="custom-toast" id="reviewToast">
+        <i data-lucide="check-circle" size="20" style="color: #10b981;"></i>
+        <span>{{ session('review_success') }}</span>
+    </div>
+</div>
+@endif
+
 <!-- HEADER -->
 <header class="main-header">
     <div class="container">
@@ -721,15 +731,15 @@
     });
 
     // Auto-hide toast
-    const toast = document.getElementById('cartToast');
-    if (toast) {
+    document.querySelectorAll('.custom-toast').forEach(toast => {
         setTimeout(() => {
             toast.style.transition = 'all 0.4s ease';
             toast.style.opacity = '0';
             toast.style.transform = 'translateX(100%)';
             setTimeout(() => toast.parentElement.remove(), 400);
         }, 3000);
-    }
+    });
 </script>
+@yield('scripts')
 </body>
 </html>

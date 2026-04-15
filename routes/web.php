@@ -7,6 +7,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\GoogleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,11 +28,23 @@ Route::middleware('guest')->group(function () {
     })->name('register');
 
     Route::post('/register', [RegisterController::class, 'register']);
+
+    // 🔑 QUÊN MẬT KHẨU
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotForm'])->name('password.forgot');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.send.otp');
+    Route::get('/verify-otp', [ForgotPasswordController::class, 'showOtpForm'])->name('password.otp.form');
+    Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verify.otp');
+    Route::get('/reset-password', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset.form');
+    Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
 });
 
 Route::post('/logout', [LogoutController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+// 🔵 GOOGLE OAUTH
+Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('google.redirect');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('google.callback');
 
 
 /*
@@ -63,6 +77,11 @@ Route::middleware('auth')->group(function () {
 
     // 📦 ĐƠN HÀNG
     Route::get('/orders', [ShopController::class, 'orders'])->name('orders');
+
+    // ⭐ ĐÁNH GIÁ & BÌNH LUẬN
+    Route::post('/product/{id}/review', [ShopController::class, 'storeReview'])->name('review.store');
+    Route::post('/review/{id}/reply', [ShopController::class, 'replyReview'])->name('review.reply');
+    Route::delete('/review/{id}', [ShopController::class, 'deleteReview'])->name('review.delete');
 });
 
 

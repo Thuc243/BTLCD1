@@ -537,10 +537,91 @@
         .scroll-top.show { display: flex; }
 
         /* ═══════════════════════════ RESPONSIVE ═══════════════════════════ */
+
+        /* Mobile Search Bar */
+        .mobile-search {
+            display: none;
+            background: white;
+            border-bottom: 1px solid var(--border-light);
+            padding: 8px 16px;
+        }
+
+        .mobile-search form {
+            position: relative;
+        }
+
+        .mobile-search input {
+            width: 100%;
+            height: 40px;
+            border: 2px solid var(--border-light);
+            border-radius: 50px;
+            padding: 0 16px 0 40px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg-body);
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .mobile-search input:focus {
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(233,69,96,0.1);
+        }
+
+        .mobile-search .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
         @media (max-width: 768px) {
             .search-wrapper { display: none; }
+            .mobile-search { display: block; }
             .header-inner { padding: 10px 0; }
-            .logo { font-size: 18px; }
+            .logo { font-size: 17px; }
+            .logo-icon { width: 34px; height: 34px; border-radius: 8px; }
+            .btn-icon { width: 38px; height: 38px; }
+            .btn-auth { height: 38px; padding: 0 16px; font-size: 12px; }
+            .user-dropdown .dropdown-toggle { height: 38px; padding: 0 12px; font-size: 12px; }
+            .header-actions { gap: 6px; }
+
+            /* Category strip mobile */
+            .category-strip-inner { justify-content: flex-start; padding: 6px 0; }
+            .cat-link { padding: 6px 14px; font-size: 12px; }
+
+            /* Footer mobile */
+            .main-footer { padding: 36px 0 0; margin-top: 40px; }
+            .footer-brand { font-size: 20px; }
+            .footer-title { margin-bottom: 14px; font-size: 14px; }
+            .footer-desc { font-size: 13px; }
+            .footer-links a { font-size: 13px; }
+            .footer-contact-item { font-size: 13px; }
+            .footer-bottom { font-size: 12px; padding: 16px 0; margin-top: 24px; }
+
+            /* Section headings */
+            .section-heading { font-size: 18px; margin-bottom: 16px; }
+            .section-heading .icon-box { width: 34px; height: 34px; border-radius: 8px; }
+
+            /* Main content */
+            .container.py-4 { padding-top: 12px !important; padding-bottom: 12px !important; }
+
+            /* Toast on mobile */
+            .toast-container { right: 12px; left: 12px; top: 70px; }
+            .custom-toast { padding: 12px 16px; font-size: 13px; }
+
+            /* Scroll to top - mobile position */
+            .scroll-top { bottom: 20px; right: 16px; width: 40px; height: 40px; }
+        }
+
+        @media (max-width: 576px) {
+            .logo span { font-size: 15px; }
+            .logo-icon { width: 30px; height: 30px; }
+            .btn-auth span { display: none; }
+            .btn-auth { padding: 0 12px; width: 38px; justify-content: center; }
         }
     </style>
 </head>
@@ -629,6 +710,14 @@
         </div>
     </div>
 </header>
+
+<!-- MOBILE SEARCH -->
+<div class="mobile-search">
+    <form method="GET" action="{{ route('home') }}">
+        <i data-lucide="search" size="16" class="search-icon"></i>
+        <input type="text" name="keyword" placeholder="Tìm kiếm sản phẩm..." value="{{ request('keyword') }}">
+    </form>
+</div>
 
 <!-- CATEGORY STRIP -->
 <nav class="category-strip">

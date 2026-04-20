@@ -239,6 +239,42 @@
         margin: 0 auto 20px;
         color: var(--text-muted);
     }
+
+    /* ═══════ ORDERS MOBILE ═══════ */
+    @media (max-width: 768px) {
+        .orders-title { font-size: 20px; }
+        .orders-subtitle { font-size: 13px; margin-bottom: 20px; }
+
+        .order-header { padding: 14px 16px; }
+        .order-id { font-size: 13px; }
+        .order-date { font-size: 11px; }
+        .order-status { font-size: 10px; padding: 4px 10px; }
+
+        .order-body { padding: 14px 16px; }
+        .order-item { gap: 10px; padding: 8px 0; }
+        .order-item img { width: 44px; height: 44px; border-radius: 8px; }
+        .order-item-name { font-size: 13px; }
+        .order-item-qty { font-size: 11px; }
+        .order-item-price { font-size: 13px; }
+
+        .order-footer { padding: 12px 16px; }
+        .order-payment { font-size: 12px; }
+        .order-shipping { font-size: 11px; }
+        .order-total { font-size: 16px; }
+
+        /* Timeline mobile */
+        .order-timeline { margin-top: 12px; padding-top: 12px; }
+        .timeline-dot { width: 26px; height: 26px; }
+        .timeline-label { font-size: 10px; }
+        .timeline-step::after { top: 12px; }
+    }
+
+    @media (max-width: 480px) {
+        .orders-title { font-size: 18px; }
+        .order-item img { width: 38px; height: 38px; }
+        .order-item-name { font-size: 12px; }
+        .order-total { font-size: 15px; }
+    }
 </style>
 
 <h2 class="orders-title">

@@ -548,11 +548,74 @@
     .review-empty p { font-size: 14px; }
 
     @media (max-width: 768px) {
-        .detail-info { padding-left: 0; margin-top: 24px; }
-        .detail-name { font-size: 22px; }
-        .detail-price { font-size: 26px; }
-        .review-overview { flex-direction: column; gap: 20px; }
+        .detail-info { padding-left: 0; margin-top: 20px; }
+        .detail-name { font-size: 20px; }
+        .detail-price { font-size: 24px; }
+        .detail-price-note { font-size: 12px; }
+        .detail-img-box { padding: 24px; min-height: 280px; }
+        .detail-img-box img { max-height: 240px; }
+        .detail-stats { gap: 12px; }
+        .detail-stat-item { font-size: 12px; }
+        .detail-price-box { padding: 14px 16px; }
+        .detail-actions { gap: 8px; }
+        .btn-buy-now, .btn-add-detail { min-width: 0; flex: 1; height: 44px; font-size: 13px; }
+
+        /* Tabs mobile */
+        .detail-nav-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; white-space: nowrap; }
+        .detail-nav-tabs::-webkit-scrollbar { display: none; }
+        .detail-nav-tabs .nav-link { padding: 10px 14px; font-size: 12px; white-space: nowrap; }
+
+        /* Specs table mobile */
+        .specs-table td:first-child { width: auto; white-space: normal; font-size: 13px; }
+        .specs-table td { padding: 10px 12px; font-size: 13px; }
+
+        /* Guarantee grid mobile */
+        .guarantee-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+        .guarantee-item { padding: 12px; gap: 10px; }
+        .guarantee-icon { width: 36px; height: 36px; border-radius: 8px; }
+        .guarantee-item h6 { font-size: 11px; }
+        .guarantee-item p { font-size: 10px; }
+
+        /* Highlights mobile */
+        .detail-highlights { padding: 14px 16px; }
+        .detail-highlights h6 { font-size: 13px; }
+        .highlight-list li { font-size: 12px; }
+
+        /* Reviews mobile */
+        .review-overview { flex-direction: column; gap: 20px; padding: 20px; }
+        .review-score-number { font-size: 42px; }
         .review-content, .review-actions, .reply-form-box, .replies-thread { margin-left: 0; }
+        .review-form-section { padding: 16px; }
+        .review-form-title { font-size: 14px; }
+        .star-btn i { width: 24px !important; height: 24px !important; }
+        .star-rating-input { gap: 8px; }
+        .review-textarea { min-height: 80px; font-size: 13px; padding: 12px; }
+        .btn-submit-review { padding: 10px 20px; font-size: 13px; }
+        .review-avatar { width: 36px; height: 36px; font-size: 14px; }
+        .review-author { font-size: 13px; }
+        .review-content { font-size: 13px; }
+        .reply-form-box { padding: 12px; margin-top: 10px; }
+        .reply-textarea { font-size: 12px; }
+        .reply-content { margin-left: 0; font-size: 12px; }
+        .reply-actions-row { margin-left: 0; }
+        .replies-thread { margin-top: 10px; }
+        .reply-item { padding: 10px 0 10px 12px; }
+
+        /* Breadcrumb */
+        .detail-breadcrumb { font-size: 12px; margin-bottom: 14px; }
+    }
+
+    @media (max-width: 480px) {
+        .detail-name { font-size: 18px; }
+        .detail-price { font-size: 22px; }
+        .detail-img-box { padding: 16px; min-height: 220px; }
+        .detail-img-box img { max-height: 180px; }
+        .guarantee-grid { grid-template-columns: 1fr; }
+        .detail-actions { flex-direction: column; }
+        .btn-buy-now, .btn-add-detail { width: 100%; }
+        .detail-nav-tabs .nav-link { padding: 10px 12px; font-size: 11px; }
+        .review-overview { padding: 16px; }
+        .review-score-number { font-size: 36px; }
     }
 </style>
 
@@ -790,46 +853,56 @@
             <!-- Write Review Form -->
             <div class="review-form-section">
                 @auth
-                    <h6 class="review-form-title">
-                        <i data-lucide="edit-3" size="18"></i>
-                        {{ $userReview ? 'Cập nhật đánh giá của bạn' : 'Viết đánh giá' }}
-                    </h6>
-                    <form action="{{ route('review.store', $phone->id) }}" method="POST" class="review-form">
-                        @csrf
-                        <div class="star-rating-input">
-                            <span class="star-label">Đánh giá của bạn:</span>
-                            <div class="star-select" id="starSelect">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <button type="button" class="star-btn {{ $userReview && $userReview->rating >= $i ? 'active' : '' }}" data-value="{{ $i }}">
-                                        <i data-lucide="star" size="28"></i>
-                                    </button>
-                                @endfor
+                    @if(isset($canReview) && $canReview || auth()->user()->role === 'admin')
+                        <h6 class="review-form-title">
+                            <i data-lucide="edit-3" size="18"></i>
+                            {{ $userReview ? 'Cập nhật đánh giá của bạn' : 'Viết đánh giá' }}
+                        </h6>
+                        @error('review')
+                            <div class="alert alert-danger" style="color: #ef4444; font-size: 14px; margin-bottom: 15px;">{{ $message }}</div>
+                        @enderror
+                        <form action="{{ route('review.store', $phone->id) }}" method="POST" class="review-form">
+                            @csrf
+                            <div class="star-rating-input">
+                                <span class="star-label">Đánh giá của bạn:</span>
+                                <div class="star-select" id="starSelect">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <button type="button" class="star-btn {{ $userReview && $userReview->rating >= $i ? 'active' : '' }}" data-value="{{ $i }}">
+                                            <i data-lucide="star" size="28"></i>
+                                        </button>
+                                    @endfor
+                                </div>
+                                <input type="hidden" name="rating" id="ratingInput" value="{{ $userReview ? $userReview->rating : '' }}">
+                                <span class="star-text" id="starText">
+                                    @if($userReview)
+                                        @switch($userReview->rating)
+                                            @case(1) Rất tệ @break
+                                            @case(2) Tệ @break
+                                            @case(3) Bình thường @break
+                                            @case(4) Tốt @break
+                                            @case(5) Tuyệt vời @break
+                                        @endswitch
+                                    @endif
+                                </span>
                             </div>
-                            <input type="hidden" name="rating" id="ratingInput" value="{{ $userReview ? $userReview->rating : '' }}">
-                            <span class="star-text" id="starText">
-                                @if($userReview)
-                                    @switch($userReview->rating)
-                                        @case(1) Rất tệ @break
-                                        @case(2) Tệ @break
-                                        @case(3) Bình thường @break
-                                        @case(4) Tốt @break
-                                        @case(5) Tuyệt vời @break
-                                    @endswitch
-                                @endif
-                            </span>
+                            @error('rating')
+                                <div class="text-danger small mb-2">{{ $message }}</div>
+                            @enderror
+                            <textarea name="content" class="review-textarea" rows="4" placeholder="Chia sẻ nhận xét của bạn về sản phẩm này...">{{ $userReview ? $userReview->content : old('content') }}</textarea>
+                            @error('content')
+                                <div class="text-danger small mb-2">{{ $message }}</div>
+                            @enderror
+                            <button type="submit" class="btn-submit-review">
+                                <i data-lucide="send" size="16"></i>
+                                {{ $userReview ? 'Cập nhật đánh giá' : 'Gửi đánh giá' }}
+                            </button>
+                        </form>
+                    @else
+                        <div class="review-login-prompt">
+                            <i data-lucide="shopping-bag" size="48" style="color: #e5e7eb; margin-bottom: 10px;"></i>
+                            <p style="font-size: 15px; font-weight: 500;">Bạn cần mua sản phẩm này và đơn hàng phải ở trạng thái "hoàn tất" để có thể viết đánh giá.</p>
                         </div>
-                        @error('rating')
-                            <div class="text-danger small mb-2">{{ $message }}</div>
-                        @enderror
-                        <textarea name="content" class="review-textarea" rows="4" placeholder="Chia sẻ nhận xét của bạn về sản phẩm này...">{{ $userReview ? $userReview->content : old('content') }}</textarea>
-                        @error('content')
-                            <div class="text-danger small mb-2">{{ $message }}</div>
-                        @enderror
-                        <button type="submit" class="btn-submit-review">
-                            <i data-lucide="send" size="16"></i>
-                            {{ $userReview ? 'Cập nhật đánh giá' : 'Gửi đánh giá' }}
-                        </button>
-                    </form>
+                    @endif
                 @else
                     <div class="review-login-prompt">
                         <i data-lucide="user" size="24"></i>

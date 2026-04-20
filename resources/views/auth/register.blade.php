@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Đăng ký | Phone Shop</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -20,7 +21,8 @@
             justify-content: center;
             background: #0f0f1a;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             padding: 20px;
         }
 
@@ -60,33 +62,33 @@
             background: rgba(255,255,255,0.08);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
-            padding: 40px 36px;
-            border-radius: 24px;
+            padding: 24px 28px;
+            border-radius: 20px;
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 25px 50px rgba(0,0,0,0.3);
         }
 
         .auth-logo {
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 16px;
         }
 
         .auth-logo-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
             background: linear-gradient(135deg, #8b5cf6, #a78bfa);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 14px;
+            margin: 0 auto 10px;
             color: white;
         }
 
         .auth-logo h2 { color: white; font-weight: 900; font-size: 24px; margin: 0; }
         .auth-logo p { color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 6px; }
 
-        .form-group { margin-bottom: 16px; }
+        .form-group { margin-bottom: 12px; }
 
         .form-label {
             display: block;
@@ -102,10 +104,10 @@
 
         .input-wrapper input {
             width: 100%;
-            height: 48px;
+            height: 42px;
             border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 0 16px 0 44px;
+            border-radius: 10px;
+            padding: 0 14px 0 40px;
             font-size: 14px;
             font-family: inherit;
             background: rgba(255,255,255,0.06);
@@ -130,31 +132,143 @@
             color: rgba(255,255,255,0.3);
         }
 
-        .btn-submit {
+        /* Buttons */
+        .btn-send-otp {
             width: 100%;
-            height: 52px;
+            height: 42px;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             background: linear-gradient(135deg, #8b5cf6, #a78bfa);
             color: white;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
             font-family: inherit;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
+            margin-top: 8px;
         }
 
-        .btn-submit:hover {
+        .btn-send-otp:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(139,92,246,0.4);
         }
 
-        .auth-footer { text-align: center; margin-top: 24px; }
+        .btn-send-otp:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-register {
+            width: 100%;
+            height: 42px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16,185,129,0.4);
+        }
+
+        .otp-section {
+            display: block;
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: rgba(139,92,246,0.08);
+            border: 1px solid rgba(139,92,246,0.2);
+            border-radius: 12px;
+            animation: slideDown 0.4s ease;
+        }
+
+        .otp-section.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .otp-section .otp-title {
+            color: #a78bfa;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .otp-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .otp-input-group input {
+            flex: 1;
+            height: 42px;
+            border: 2px solid rgba(139,92,246,0.3);
+            border-radius: 10px;
+            padding: 0 16px;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 6px;
+            text-align: center;
+            font-family: inherit;
+            background: rgba(255,255,255,0.06);
+            color: #a78bfa;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .otp-input-group input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139,92,246,0.15);
+        }
+
+        .otp-input-group input::placeholder {
+            color: rgba(255,255,255,0.2);
+            font-size: 14px;
+            letter-spacing: 0;
+            font-weight: 400;
+        }
+
+        .resend-link {
+            color: rgba(255,255,255,0.4);
+            font-size: 12px;
+            margin-top: 8px;
+            text-align: right;
+        }
+
+        .resend-link a {
+            color: #a78bfa;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .resend-link a:hover { color: #8b5cf6; }
+        .resend-link a.disabled { opacity: 0.4; pointer-events: none; }
+
+        .auth-footer { text-align: center; margin-top: 16px; }
 
         .auth-footer p {
             color: rgba(255,255,255,0.5);
@@ -168,25 +282,6 @@
         }
 
         .auth-footer a:hover { color: #a78bfa; }
-
-        .auth-divider {
-            display: flex;
-            align-items: center;
-            margin: 20px 0;
-        }
-
-        .auth-divider::before, .auth-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(255,255,255,0.1);
-        }
-
-        .auth-divider span {
-            padding: 0 16px;
-            color: rgba(255,255,255,0.3);
-            font-size: 12px;
-        }
 
         .back-home {
             display: flex;
@@ -202,42 +297,75 @@
         .back-home:hover { color: white; }
 
         .alert {
+            border-radius: 10px;
+            font-size: 12px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+        }
+
+        .alert-error {
             background: rgba(239,68,68,0.15);
             border: 1px solid rgba(239,68,68,0.3);
-            border-radius: 12px;
             color: #fca5a5;
-            font-size: 13px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: rgba(16,185,129,0.15);
+            border: 1px solid rgba(16,185,129,0.3);
+            color: #6ee7b7;
         }
 
         .alert ul { margin-bottom: 0; padding-left: 18px; }
 
-        .btn-google {
-            width: 100%;
-            height: 48px;
-            border: 2px solid rgba(255,255,255,0.15);
-            border-radius: 12px;
-            background: rgba(255,255,255,0.06);
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .email-hint {
+            color: rgba(255,255,255,0.35);
+            font-size: 11px;
+            margin-top: 6px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            text-decoration: none;
+            gap: 4px;
         }
 
-        .btn-google:hover {
-            background: rgba(255,255,255,0.12);
-            border-color: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            color: white;
+        .email-hint i { color: #f59e0b; }
+
+        .info-steps {
+            background: rgba(139,92,246,0.08);
+            border: 1px solid rgba(139,92,246,0.15);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 16px;
+        }
+
+        .info-steps p {
+            color: rgba(255,255,255,0.45);
+            font-size: 11px;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .info-steps .step-label {
+            color: #a78bfa;
+            font-weight: 700;
+        }
+
+        #statusMsg {
+            border-radius: 10px;
+            font-size: 12px;
+            padding: 8px 12px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        #statusMsg.show { display: block; }
+
+        .spinner-icon {
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -258,8 +386,13 @@
             <p>Tạo tài khoản mới</p>
         </div>
 
+        <div class="info-steps">
+            <p><span class="step-label">Bước 1:</span> Nhập thông tin & nhấn "Gửi mã xác thực"</p>
+            <p><span class="step-label">Bước 2:</span> Nhập mã OTP từ email & nhấn "Đăng ký"</p>
+        </div>
+
         @if($errors->any())
-            <div class="alert">
+            <div class="alert alert-error">
                 <ul>
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -268,22 +401,26 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('register') }}">
+        <form method="POST" action="{{ route('register') }}" id="registerForm">
             @csrf
 
             <div class="form-group">
                 <label class="form-label">Họ và tên</label>
                 <div class="input-wrapper">
                     <i data-lucide="user" size="18" class="input-icon"></i>
-                    <input type="text" name="name" placeholder="Nguyễn Văn A" required value="{{ old('name') }}">
+                    <input type="text" name="name" id="inputName" placeholder="Nguyễn Văn A" required value="{{ old('name') }}">
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Email</label>
+                <label class="form-label">Email (Gmail)</label>
                 <div class="input-wrapper">
                     <i data-lucide="mail" size="18" class="input-icon"></i>
-                    <input type="email" name="email" placeholder="example@gmail.com" required value="{{ old('email') }}">
+                    <input type="email" name="email" id="inputEmail" placeholder="yourname@gmail.com" required value="{{ old('email') }}">
+                </div>
+                <div class="email-hint">
+                    <i data-lucide="info" size="12"></i>
+                    Chỉ chấp nhận tài khoản Google (Gmail)
                 </div>
             </div>
 
@@ -293,7 +430,7 @@
                         <label class="form-label">Mật khẩu</label>
                         <div class="input-wrapper">
                             <i data-lucide="lock" size="18" class="input-icon"></i>
-                            <input type="password" name="password" placeholder="••••••••" required>
+                            <input type="password" name="password" id="inputPassword" placeholder="••••••••" required>
                         </div>
                     </div>
                 </div>
@@ -302,24 +439,43 @@
                         <label class="form-label">Xác nhận</label>
                         <div class="input-wrapper">
                             <i data-lucide="shield-check" size="18" class="input-icon"></i>
-                            <input type="password" name="password_confirmation" placeholder="••••••••" required>
+                            <input type="password" name="password_confirmation" id="inputPasswordConfirm" placeholder="••••••••" required>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button class="btn-submit" type="submit">
-                <i data-lucide="user-plus" size="18"></i>
-                ĐĂNG KÝ TÀI KHOẢN
+            <!-- Nút GỬI MÃ XÁC THỰC - không submit form, gọi AJAX -->
+            <button class="btn-send-otp" type="button" id="btnSendOtp" onclick="sendOtp()">
+                <i data-lucide="send" size="16"></i>
+                GỬI MÃ XÁC THỰC
+            </button>
+
+            <!-- Thông báo trạng thái -->
+            <div id="statusMsg"></div>
+
+            <!-- OTP Section -->
+            <div class="otp-section" id="otpSection">
+                <div class="otp-title">
+                    <i data-lucide="shield" size="14"></i>
+                    Nhập mã OTP đã gửi về email
+                </div>
+                <div class="otp-input-group">
+                    <input type="text" name="otp" id="inputOtp" maxlength="6" placeholder="Nhập 6 số" autocomplete="off">
+                </div>
+                <div class="resend-link">
+                    <a href="javascript:void(0)" onclick="sendOtp()" id="resendLink">Gửi lại mã</a>
+                </div>
+            </div>
+
+            <!-- Nút ĐĂNG KÝ -->
+            <button class="btn-register" type="submit" id="btnRegister">
+                <i data-lucide="user-check" size="16"></i>
+                ĐĂNG KÝ
             </button>
         </form>
 
         <div class="auth-footer">
-            <div class="auth-divider"><span>hoặc</span></div>
-            <a href="{{ route('google.redirect') }}" class="btn-google">
-                <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                Đăng ký bằng Google
-            </a>
             <p class="mt-3">Đã có tài khoản? <a href="{{ route('login') }}">Đăng nhập</a></p>
             <a href="{{ route('home') }}" class="back-home mt-3">
                 <i data-lucide="arrow-left" size="14"></i> Quay về trang chủ
@@ -328,6 +484,146 @@
     </div>
 </div>
 
-<script>lucide.createIcons();</script>
+<script>
+    lucide.createIcons();
+
+    let otpSent = false;
+    let cooldown = 0;
+    let cooldownTimer = null;
+
+    function showStatus(msg, type) {
+        const el = document.getElementById('statusMsg');
+        el.className = 'show';
+        if (type === 'success') {
+            el.style.background = 'rgba(16,185,129,0.15)';
+            el.style.border = '1px solid rgba(16,185,129,0.3)';
+            el.style.color = '#6ee7b7';
+        } else if (type === 'error') {
+            el.style.background = 'rgba(239,68,68,0.15)';
+            el.style.border = '1px solid rgba(239,68,68,0.3)';
+            el.style.color = '#fca5a5';
+        } else {
+            el.style.background = 'rgba(139,92,246,0.15)';
+            el.style.border = '1px solid rgba(139,92,246,0.3)';
+            el.style.color = '#a78bfa';
+        }
+        el.innerHTML = msg;
+    }
+
+    function hideStatus() {
+        document.getElementById('statusMsg').className = '';
+    }
+
+    function startCooldown(seconds) {
+        cooldown = seconds;
+        const btn = document.getElementById('btnSendOtp');
+        const resend = document.getElementById('resendLink');
+
+        btn.disabled = true;
+        resend.classList.add('disabled');
+
+        clearInterval(cooldownTimer);
+        cooldownTimer = setInterval(() => {
+            cooldown--;
+            btn.innerHTML = '<i data-lucide="clock" size="16"></i> Gửi lại sau ' + cooldown + 's';
+            resend.textContent = 'Gửi lại sau ' + cooldown + 's';
+
+            if (cooldown <= 0) {
+                clearInterval(cooldownTimer);
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="send" size="16"></i> GỬI LẠI MÃ';
+                resend.textContent = 'Gửi lại mã';
+                resend.classList.remove('disabled');
+                lucide.createIcons();
+            }
+        }, 1000);
+    }
+
+    async function sendOtp() {
+        const name = document.getElementById('inputName').value.trim();
+        const email = document.getElementById('inputEmail').value.trim();
+        const password = document.getElementById('inputPassword').value;
+        const passwordConfirm = document.getElementById('inputPasswordConfirm').value;
+
+        // Validate phía client
+        if (!name) { showStatus('⚠️ Vui lòng nhập họ và tên.', 'error'); return; }
+        if (!email) { showStatus('⚠️ Vui lòng nhập email.', 'error'); return; }
+        if (!email.match(/^[a-zA-Z0-9._%+\-]+@gmail\.com$/i)) {
+            showStatus('⚠️ Chỉ chấp nhận email Gmail (@gmail.com).', 'error'); return;
+        }
+        if (!password || password.length < 6) {
+            showStatus('⚠️ Mật khẩu phải có ít nhất 6 ký tự.', 'error'); return;
+        }
+        if (password !== passwordConfirm) {
+            showStatus('⚠️ Mật khẩu xác nhận không khớp.', 'error'); return;
+        }
+
+        if (cooldown > 0) return;
+
+        // Hiển thị loading
+        const btn = document.getElementById('btnSendOtp');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-icon">⏳</span> Đang gửi mã...';
+        showStatus('⏳ Đang gửi mã xác thực về ' + email + '... Vui lòng đợi.', 'info');
+
+        try {
+            const response = await fetch('{{ route("register.send.otp") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ name, email, password, password_confirmation: passwordConfirm })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                otpSent = true;
+                showStatus('✅ ' + data.message, 'success');
+
+                // Hiện ô OTP và nút Đăng ký
+                document.getElementById('otpSection').classList.add('show');
+                document.getElementById('btnRegister').style.display = 'flex';
+                document.getElementById('inputOtp').focus();
+
+                // Cooldown 60 giây
+                startCooldown(60);
+                lucide.createIcons();
+            } else {
+                let errorMsg = data.message || 'Có lỗi xảy ra.';
+                if (data.errors) {
+                    errorMsg = Object.values(data.errors).flat().join('<br>');
+                }
+                showStatus('❌ ' + errorMsg, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="send" size="16"></i> GỬI MÃ XÁC THỰC';
+                lucide.createIcons();
+            }
+        } catch (err) {
+            showStatus('❌ Lỗi kết nối. Vui lòng thử lại.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="send" size="16"></i> GỬI MÃ XÁC THỰC';
+            lucide.createIcons();
+        }
+    }
+
+    // Validate form khi nhấn Đăng ký
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const otp = document.getElementById('inputOtp').value.trim();
+        if (!otp || otp.length !== 6) {
+            e.preventDefault();
+            showStatus('⚠️ Vui lòng nhập đủ 6 số mã OTP.', 'error');
+            document.getElementById('inputOtp').focus();
+            return;
+        }
+
+        const btn = document.getElementById('btnRegister');
+        btn.style.opacity = '0.7';
+        btn.style.pointerEvents = 'none';
+        btn.innerHTML = '<span class="spinner-icon">⏳</span> Đang xử lý...';
+    });
+</script>
 </body>
 </html>

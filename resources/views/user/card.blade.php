@@ -46,13 +46,44 @@
     .card-price { font-size: 20px; font-weight: 800; color: var(--accent); margin-bottom: 14px; }
     .btn-add-cart { width: 100%; height: 42px; border: 2px solid var(--primary); border-radius: var(--radius-sm); background: transparent; color: var(--primary); font-weight: 700; font-size: 13px; font-family: inherit; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: auto; }
     .btn-add-cart:hover { background: var(--primary); color: white; transform: translateY(-1px); box-shadow: 0 4px 15px rgba(26,26,46,0.25); }
+
+    /* ═══════ CARD MOBILE RESPONSIVE ═══════ */
+    @media (max-width: 768px) {
+        .product-card:hover { transform: none; }
+        .card-actions { opacity: 1; transform: translateX(0); }
+        .card-img-wrapper { padding: 16px; }
+        .card-img-wrapper img { max-height: 120px; max-width: 80%; }
+        .card-body-custom { padding: 12px 14px 14px; }
+        .card-category { font-size: 10px; margin-bottom: 4px; }
+        .card-title-custom { font-size: 13px; height: 38px; margin-bottom: 6px; line-height: 1.4; }
+        .card-meta { font-size: 10px; margin-bottom: 8px; }
+        .card-price { font-size: 16px; margin-bottom: 10px; }
+        .btn-add-cart { height: 36px; font-size: 11px; gap: 4px; border-width: 1.5px; border-radius: 8px; }
+        .card-badge { top: 8px; left: 8px; padding: 3px 7px; font-size: 9px; }
+        .card-action-btn { width: 28px; height: 28px; }
+    }
+
+    @media (max-width: 576px) {
+        .card-img-wrapper { padding: 12px; }
+        .card-img-wrapper img { max-height: 100px; }
+        .card-body-custom { padding: 10px 10px 12px; }
+        .card-title-custom { font-size: 12px; height: 34px; }
+        .card-price { font-size: 15px; margin-bottom: 8px; }
+        .btn-add-cart { height: 32px; font-size: 10px; }
+        .btn-add-cart .btn-cart-text { display: none; }
+        .btn-add-cart .btn-cart-text-short { display: inline; }
+    }
+
+    @media (min-width: 577px) {
+        .btn-add-cart .btn-cart-text-short { display: none; }
+    }
 </style>
 
 @php
     $imgSrc = str_starts_with($p->image ?? '', 'http') ? $p->image : asset('uploads/' . $p->image);
 @endphp
 
-<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+<div class="col-xl-3 col-lg-4 col-md-6 col-6 mb-3">
     <div class="card product-card">
         <div class="card-img-wrapper">
             @if($p->is_featured)
@@ -81,7 +112,9 @@
             </div>
             <div class="card-price">{{ number_format($p->price, 0, ',', '.') }}₫</div>
             <a href="{{ route('add', $p->id) }}" class="btn-add-cart">
-                <i data-lucide="shopping-bag" size="16"></i> Thêm vào giỏ
+                <i data-lucide="shopping-bag" size="16"></i>
+                <span class="btn-cart-text">Thêm vào giỏ</span>
+                <span class="btn-cart-text-short">Thêm giỏ</span>
             </a>
         </div>
     </div>

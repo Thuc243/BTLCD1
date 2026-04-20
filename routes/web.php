@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AdminController;
@@ -9,6 +10,20 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\GoogleController;
+
+// 🧪 TEST MAIL - Xóa route này sau khi test xong
+Route::get('/test-mail', function () {
+    try {
+        Mail::send([], [], function ($message) {
+            $message->to('thuc1234vvp@gmail.com')
+                    ->subject('Test Mail từ Phone Shop')
+                    ->html('<h1>Mail gửi thành công!</h1><p>Hệ thống email hoạt động bình thường.</p>');
+        });
+        return '<h1 style="color:green">✅ Gửi mail thành công!</h1><p>Kiểm tra hộp thư của bạn.</p>';
+    } catch (\Exception $e) {
+        return '<h1 style="color:red">❌ Lỗi gửi mail</h1><pre>' . $e->getMessage() . '</pre><hr><pre>' . $e->getTraceAsString() . '</pre>';
+    }
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +44,11 @@ Route::middleware('guest')->group(function () {
 
     Route::post('/register', [RegisterController::class, 'register']);
 
+    // 📧 XÁC THỰC OTP ĐĂNG KÝ (AJAX)
+    Route::post('/register/send-otp', [RegisterController::class, 'sendOtpAjax'])->name('register.send.otp');
+    Route::post('/register/verify-otp', [RegisterController::class, 'verifyOtp'])->name('register.verify.otp');
+    Route::post('/register/resend-otp', [RegisterController::class, 'resendOtp'])->name('register.resend.otp');
+
     // 🔑 QUÊN MẬT KHẨU
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotForm'])->name('password.forgot');
     Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.send.otp');
@@ -42,9 +62,7 @@ Route::post('/logout', [LogoutController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-// 🔵 GOOGLE OAUTH
-Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('google.redirect');
-Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('google.callback');
+
 
 
 /*

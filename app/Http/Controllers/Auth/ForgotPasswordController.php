@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\PasswordResetOtp;
@@ -45,6 +46,7 @@ class ForgotPasswordController extends Controller
 
         // Gửi email
         $emailSent = false;
+        $mailError = '';
         try {
             Mail::send([], [], function ($message) use ($request, $otp) {
                 $message->to($request->email)
@@ -67,8 +69,9 @@ class ForgotPasswordController extends Controller
             });
             $emailSent = true;
         } catch (\Exception $e) {
-            // Email gửi thất bại - hiện OTP trên màn hình (chế độ development)
             $emailSent = false;
+            $mailError = $e->getMessage();
+            Log::error('Forgot password OTP mail failed: ' . $e->getMessage());
         }
 
         // Lưu email vào session để dùng ở bước sau
@@ -77,8 +80,7 @@ class ForgotPasswordController extends Controller
         if ($emailSent) {
             return redirect()->route('password.otp.form')->with('success', 'Đã gửi mã OTP về email ' . $request->email);
         } else {
-            // Fallback: hiện OTP trên màn hình khi chưa cấu hình email
-            return redirect()->route('password.otp.form')->with('success', 'Mã OTP của bạn là: ' . $otp . ' (Email chưa được cấu hình, mã hiển thị tạm trên màn hình)');
+            return redirect()->route('password.otp.form')->with('success', 'Mã OTP của bạn là: ' . $otp . ' (Lỗi: ' . $mailError . ')');
         }
     }
 

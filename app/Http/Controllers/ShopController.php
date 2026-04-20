@@ -60,18 +60,26 @@ class ShopController extends Controller
             $ratingDistribution[$i] = $count;
         }
 
-        // Kiểm tra user đã đánh giá chưa
+        // Kiểm tra user đã đánh giá chưa và có quyền đánh giá không
         $userReview = null;
+        $canReview = false;
         if (Auth::check()) {
             $userReview = Review::where('phone_id', $id)
                             ->where('user_id', Auth::id())
                             ->whereNull('parent_id')
                             ->first();
+
+            // Chỉ user đã mua sản phẩm này và đơn hàng hoàn tất mới được đánh giá
+            $canReview = Order::where('user_id', Auth::id())
+                ->where('status', 'completed')
+                ->whereHas('items', function($q) use ($id){
+                    $q->where('phone_id', $id);
+                })->exists();
         }
 
         return view('user.detail', compact(
             'phone', 'related', 'categories',
-            'reviews', 'avgRating', 'reviewCount', 'ratingDistribution', 'userReview'
+            'reviews', 'avgRating', 'reviewCount', 'ratingDistribution', 'userReview', 'canReview'
         ));
     }
 
@@ -192,6 +200,16 @@ class ShopController extends Controller
             'rating' => 'required|integer|min:1|max:5',
             'content' => 'required|string|min:5|max:1000',
         ]);
+
+        $canReview = Order::where('user_id', Auth::id())
+                ->where('status', 'completed')
+                ->whereHas('items', function($q) use ($phoneId){
+                    $q->where('phone_id', $phoneId);
+                })->exists();
+
+        if (!$canReview && auth()->user()->role !== 'admin') {
+            return redirect()->back()->withErrors(['review' => 'Bạn cần mua sản phẩm này và đơn hàng đã hoàn tất để có thể đánh giá.']);
+        }
 
         // Kiểm tra đã đánh giá chưa
         $existing = Review::where('phone_id', $phoneId)

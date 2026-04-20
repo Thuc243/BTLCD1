@@ -121,13 +121,54 @@
         opacity: 1;
         transform: translateY(0);
     }
+
+    /* Mobile Hero Carousel */
     @media (max-width: 768px) {
         #heroCarousel .carousel-item > div {
-            height: 300px !important;
-            padding: 0 30px !important;
+            height: 260px !important;
+            padding: 0 24px !important;
         }
         #heroCarousel h1 {
-            font-size: 28px !important;
+            font-size: 24px !important;
+            margin: 12px 0 8px !important;
+        }
+        #heroCarousel p {
+            font-size: 13px !important;
+            margin-bottom: 16px !important;
+        }
+        #heroCarousel .btn {
+            padding: 10px 24px !important;
+            font-size: 13px !important;
+        }
+        #heroCarousel span[style*="padding: 6px 16px"] {
+            font-size: 10px !important;
+            padding: 4px 10px !important;
+        }
+        .mb-5:first-child {
+            margin-bottom: 24px !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        #heroCarousel .carousel-item > div {
+            height: 220px !important;
+            padding: 0 20px !important;
+        }
+        #heroCarousel h1 {
+            font-size: 20px !important;
+            margin: 10px 0 6px !important;
+        }
+        #heroCarousel p {
+            font-size: 12px !important;
+            margin-bottom: 12px !important;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        #heroCarousel .btn {
+            padding: 8px 20px !important;
+            font-size: 12px !important;
         }
     }
 </style>

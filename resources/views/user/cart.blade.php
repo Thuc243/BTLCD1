@@ -253,8 +253,79 @@
         color: var(--text-muted);
     }
 
+    /* ═══════ CART MOBILE ═══════ */
     @media (max-width: 768px) {
-        .cart-table { overflow-x: auto; }
+        .cart-title { font-size: 20px; }
+        .cart-count-label { font-size: 13px; }
+
+        /* Hide table headers on mobile */
+        .cart-table thead { display: none; }
+        .cart-table table { border: none; }
+        .cart-table td { 
+            display: block; 
+            padding: 8px 16px; 
+            border: none;
+            text-align: left;
+        }
+        .cart-table tr {
+            display: block;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+        }
+        .cart-table tr:last-child { border-bottom: none; }
+
+        /* Product info row */
+        .cart-product { margin-bottom: 8px; }
+        .cart-product img { width: 52px; height: 52px; }
+        .cart-product-name { font-size: 13px; }
+
+        /* Price + Qty + Subtotal inline on mobile */
+        .cart-table td:nth-child(2) { 
+            display: inline-block; 
+            font-size: 13px;
+            padding: 4px 16px;
+            color: var(--text-muted);
+        }
+        .cart-table td:nth-child(2)::before {
+            content: "Đơn giá: ";
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .cart-table td:nth-child(3) { 
+            display: inline-block;
+            padding: 8px 16px;
+        }
+
+        .cart-table td:nth-child(4) {
+            display: inline-block;
+            padding: 4px 16px;
+            font-size: 15px;
+        }
+
+        /* Remove button - positioned top right */
+        .cart-table td:nth-child(5) {
+            position: absolute;
+            top: 12px;
+            right: 0;
+            padding: 0 16px;
+        }
+
+        .qty-mini-btn { width: 30px; height: 30px; }
+        .qty-mini-val { width: 36px; height: 30px; font-size: 12px; }
+
+        /* Summary card */
+        .summary-card { position: static; padding: 20px; margin-top: 16px; }
+        .summary-title { font-size: 16px; }
+        .summary-row.total { font-size: 18px; }
+        .btn-checkout { height: 48px; font-size: 14px; }
+    }
+
+    @media (max-width: 480px) {
+        .cart-title { font-size: 18px; }
+        .cart-product img { width: 44px; height: 44px; }
+        .cart-product-name { font-size: 12px; }
     }
 </style>
 

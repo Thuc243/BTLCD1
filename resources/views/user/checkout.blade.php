@@ -227,8 +227,39 @@
         box-shadow: 0 8px 25px rgba(233,69,96,0.35);
     }
 
+    /* ═══════ CHECKOUT MOBILE ═══════ */
     @media (max-width: 768px) {
         .payment-options { flex-direction: column; }
+        .checkout-title { font-size: 20px; }
+        .checkout-subtitle { font-size: 13px; margin-bottom: 20px; }
+        .checkout-card { padding: 20px; margin-bottom: 14px; }
+        .checkout-card-title { font-size: 14px; margin-bottom: 16px; padding-bottom: 10px; }
+        .checkout-card-title .num { width: 24px; height: 24px; font-size: 11px; }
+        .form-label-custom { font-size: 12px; }
+        .form-control-custom { height: 42px; font-size: 13px; border-radius: 8px; }
+
+        .payment-label { padding: 12px 14px; gap: 10px; }
+        .payment-icon { width: 38px; height: 38px; border-radius: 8px; }
+        .payment-name { font-size: 13px; }
+        .payment-desc { font-size: 11px; }
+
+        .qr-section { padding: 16px; }
+        .qr-section img { width: 180px; }
+        .qr-info { font-size: 12px; }
+
+        .order-summary-item { gap: 10px; padding: 10px 0; }
+        .order-summary-item img { width: 44px; height: 44px; }
+        .order-summary-item .name { font-size: 12px; }
+        .order-summary-item .price { font-size: 13px; }
+
+        .checkout-total { font-size: 18px; }
+        .btn-order { height: 48px; font-size: 14px; }
+    }
+
+    @media (max-width: 480px) {
+        .checkout-title { font-size: 18px; }
+        .checkout-card { padding: 16px; }
+        .checkout-total { font-size: 16px; }
     }
 </style>
 

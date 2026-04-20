@@ -39,6 +39,19 @@
         opacity: 0.7;
         margin: 0;
     }
+
+    /* ═══════ CATEGORY MOBILE ═══════ */
+    @media (max-width: 768px) {
+        .cat-breadcrumb { font-size: 12px; margin-bottom: 14px; }
+        .cat-hero { padding: 24px 20px; margin-bottom: 20px; }
+        .cat-hero h1 { font-size: 22px; }
+        .cat-hero p { font-size: 13px; }
+    }
+
+    @media (max-width: 480px) {
+        .cat-hero { padding: 20px 16px; margin-bottom: 16px; }
+        .cat-hero h1 { font-size: 20px; }
+    }
 </style>
 
 <!-- Breadcrumb -->

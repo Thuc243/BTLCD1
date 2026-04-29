@@ -17,6 +17,14 @@ class LoginController extends Controller
 
         if(Auth::attempt($credentials)){
             $request->session()->regenerate();
+            
+            $role = Auth::user()->role;
+            if ($role === 'shipper') {
+                return redirect('/shipper/orders');
+            } elseif ($role === 'admin') {
+                return redirect('/admin');
+            }
+            
             return redirect('/');
         }
 

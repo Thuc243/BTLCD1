@@ -281,6 +281,9 @@
     <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->is('admin') ? 'active' : '' }}">
         <i data-lucide="bar-chart-3" size="18"></i> Dashboard
     </a>
+    <a href="{{ route('admin.revenue') }}" class="nav-item {{ request()->is('admin/revenue') ? 'active' : '' }}">
+        <i data-lucide="pie-chart" size="18"></i> Báo cáo doanh thu
+    </a>
 
     <div class="sidebar-section">Quản lý</div>
     <a href="{{ route('admin.phones') }}" class="nav-item {{ request()->is('admin/phones*') ? 'active' : '' }}">

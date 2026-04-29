@@ -623,6 +623,87 @@
             .btn-auth span { display: none; }
             .btn-auth { padding: 0 12px; width: 38px; justify-content: center; }
         }
+
+        /* ═══════════════════════════ LIVE SEARCH AJAX ═══════════════════════════ */
+        .search-results-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            margin-top: 8px;
+            z-index: 1100;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            border: 1px solid var(--border-light);
+        }
+
+        .search-results-dropdown.active {
+            display: block;
+        }
+
+        .search-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border-light);
+            transition: var(--transition);
+        }
+
+        .search-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-item:hover {
+            background: var(--bg-body);
+        }
+
+        .search-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .search-item-info {
+            flex: 1;
+        }
+
+        .search-item-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .search-item-price {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .search-loading {
+            padding: 16px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .search-no-result {
+            padding: 16px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
     </style>
 </head>
 
@@ -660,9 +741,10 @@
             </a>
 
             <!-- Search -->
-            <form method="GET" action="{{ route('home') }}" class="search-wrapper">
+            <form method="GET" action="{{ route('home') }}" class="search-wrapper" style="position: relative;">
                 <i data-lucide="search" size="18" class="search-icon"></i>
-                <input type="text" name="keyword" placeholder="Tìm kiếm iPhone, Samsung, Xiaomi..." value="{{ request('keyword') }}">
+                <input type="text" name="keyword" id="desktopSearchInput" autocomplete="off" placeholder="Tìm kiếm iPhone, Samsung, Xiaomi..." value="{{ request('keyword') }}">
+                <div class="search-results-dropdown" id="desktopSearchResults"></div>
             </form>
 
             <!-- Actions -->
@@ -686,8 +768,13 @@
                                     <i data-lucide="shield" size="16" class="me-2"></i>Quản trị
                                 </a></li>
                             @endif
+                            @if(auth()->user()->role == 'shipper' || auth()->user()->role == 'admin')
+                                <li><a class="dropdown-item" href="{{ route('shipper.orders') }}">
+                                    <i data-lucide="truck" size="16" class="me-2"></i>Giao hàng (Shipper)
+                                </a></li>
+                            @endif
                             <li><a class="dropdown-item" href="{{ route('orders') }}">
-                                <i data-lucide="package" size="16" class="me-2"></i>Đơn hàng
+                                <i data-lucide="package" size="16" class="me-2"></i>Đơn mua của tôi
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
@@ -713,9 +800,10 @@
 
 <!-- MOBILE SEARCH -->
 <div class="mobile-search">
-    <form method="GET" action="{{ route('home') }}">
+    <form method="GET" action="{{ route('home') }}" style="position: relative;">
         <i data-lucide="search" size="16" class="search-icon"></i>
-        <input type="text" name="keyword" placeholder="Tìm kiếm sản phẩm..." value="{{ request('keyword') }}">
+        <input type="text" name="keyword" id="mobileSearchInput" autocomplete="off" placeholder="Tìm kiếm sản phẩm..." value="{{ request('keyword') }}">
+        <div class="search-results-dropdown" id="mobileSearchResults"></div>
     </form>
 </div>
 
@@ -828,6 +916,81 @@
             setTimeout(() => toast.parentElement.remove(), 400);
         }, 3000);
     });
+
+    // ════════════════════ LIVE SEARCH AJAX ════════════════════
+    function initLiveSearch(inputId, resultsId) {
+        const input = document.getElementById(inputId);
+        const resultsBox = document.getElementById(resultsId);
+        if(!input || !resultsBox) return;
+
+        let debounceTimer;
+
+        input.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const keyword = this.value.trim();
+
+            if(keyword.length < 2) {
+                resultsBox.classList.remove('active');
+                return;
+            }
+
+            resultsBox.classList.add('active');
+            resultsBox.innerHTML = '<div class="search-loading">Đang tìm...</div>';
+
+            debounceTimer = setTimeout(() => {
+                fetch(`{{ route('search.ajax') }}?keyword=${encodeURIComponent(keyword)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        resultsBox.innerHTML = '';
+                        if(data.length === 0) {
+                            resultsBox.innerHTML = `<div class="search-no-result">Không tìm thấy sản phẩm nào cho "${keyword}"</div>`;
+                            return;
+                        }
+
+                        data.forEach(item => {
+                            const formattedPrice = new Intl.NumberFormat('vi-VN').format(item.price) + 'đ';
+                            let imageUrl = item.image;
+                            if (imageUrl && !imageUrl.startsWith('http')) {
+                                imageUrl = `{{ asset('uploads') }}/${item.image}`;
+                            } else if (!imageUrl) {
+                                imageUrl = 'https://via.placeholder.com/40';
+                            }
+                            
+                            resultsBox.innerHTML += `
+                                <a href="{{ url('/product') }}/${item.id}" class="search-item">
+                                    <img src="${imageUrl}" alt="${item.name}">
+                                    <div class="search-item-info">
+                                        <div class="search-item-name">${item.name}</div>
+                                        <div class="search-item-price">${formattedPrice}</div>
+                                    </div>
+                                </a>
+                            `;
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Lỗi tìm kiếm:', err);
+                        resultsBox.innerHTML = '<div class="search-no-result text-danger">Có lỗi xảy ra. Vui lòng thử lại.</div>';
+                    });
+            }, 300); // Đợi 300ms sau khi ngừng gõ
+        });
+
+        // Ẩn khi click ra ngoài
+        document.addEventListener('click', function(e) {
+            if(!input.contains(e.target) && !resultsBox.contains(e.target)) {
+                resultsBox.classList.remove('active');
+            }
+        });
+        
+        // Hiện lại khi focus vào ô tìm kiếm nếu có từ khóa
+        input.addEventListener('focus', function() {
+            if(this.value.trim().length >= 2) {
+                resultsBox.classList.add('active');
+            }
+        });
+    }
+
+    initLiveSearch('desktopSearchInput', 'desktopSearchResults');
+    initLiveSearch('mobileSearchInput', 'mobileSearchResults');
 </script>
 @yield('scripts')
 </body>

@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\ShipperController;
 
 // 🧪 TEST MAIL - Xóa route này sau khi test xong
 Route::get('/test-mail', function () {
@@ -73,6 +74,7 @@ Route::post('/logout', [LogoutController::class, 'logout'])
 
 // 🏠 Trang chủ + tìm kiếm
 Route::get('/', [ShopController::class, 'home'])->name('home');
+Route::get('/search-ajax', [ShopController::class, 'searchAjax'])->name('search.ajax');
 
 // 📱 Chi tiết sản phẩm
 Route::get('/product/{id}', [ShopController::class, 'detail'])->name('product.detail');
@@ -110,8 +112,9 @@ Route::middleware('auth')->group(function () {
 */
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
-    // 📊 DASHBOARD
+    // 📊 DASHBOARD & REVENUE
     Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/revenue', [AdminController::class, 'revenue'])->name('admin.revenue');
 
     // 📱 SẢN PHẨM
     Route::get('/phones', [AdminController::class, 'phones'])->name('admin.phones');
@@ -137,4 +140,14 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
     // 👥 NGƯỜI DÙNG
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+});
+
+/*
+|--------------------------------------------------------------------------
+| SHIPPER (GIAO HÀNG)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('shipper')->middleware(['auth', 'shipper'])->group(function () {
+    Route::get('/orders', [ShipperController::class, 'orders'])->name('shipper.orders');
+    Route::post('/orders/{id}/complete', [ShipperController::class, 'complete'])->name('shipper.orders.complete');
 });

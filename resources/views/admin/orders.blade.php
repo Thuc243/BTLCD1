@@ -54,7 +54,14 @@
                         @if($o->status == 'pending')
                             <span class="badge rounded-pill" style="background: #fef3c7; color: #d97706; border: 1px solid #fbbf24;">⏳ Đang chờ</span>
                         @elseif($o->status == 'completed')
-                            <span class="badge rounded-pill" style="background: #d1fae5; color: #059669; border: 1px solid #34d399;">✅ Hoàn tất</span>
+                            <div class="d-flex flex-column gap-1">
+                                <span class="badge rounded-pill" style="background: #d1fae5; color: #059669; border: 1px solid #34d399;">✅ Hoàn tất</span>
+                                @if($o->delivery_image)
+                                    <a href="{{ asset('uploads/delivery/' . $o->delivery_image) }}" target="_blank" class="badge rounded-pill text-decoration-none" style="background: #e0e7ff; color: #4338ca; border: 1px solid #a5b4fc; font-size: 10px;">
+                                        <i data-lucide="image" size="10" class="me-1"></i> Xem ảnh giao hàng
+                                    </a>
+                                @endif
+                            </div>
                         @else
                             <span class="badge rounded-pill" style="background: #fee2e2; color: #dc2626; border: 1px solid #f87171;">❌ Đã hủy</span>
                         @endif

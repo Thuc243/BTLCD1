@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\Review;
+use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -88,6 +89,88 @@ class AdminController extends Controller
             'recentReviews' => $recentReviews,
             'orderStatusData' => json_encode(array_values($orderStatusData)),
         ]);
+    }
+
+    /* ================= REVENUE (THỐNG KÊ DOANH THU NÂNG CAO) ================= */
+    public function revenue(Request $request){
+        $period = $request->input('period', 'month'); // day, month, quarter, year
+        $productId = $request->input('product_id', 'all');
+
+        $query = OrderItem::select('order_items.*', 'orders.created_at as order_date')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where('orders.status', 'completed')
+            ->with('phone');
+
+        if ($productId !== 'all') {
+            $query->where('order_items.phone_id', $productId);
+        }
+
+        // Sort newest first
+        $orderItems = $query->orderBy('orders.created_at', 'desc')->get();
+
+        $grouped = [];
+
+        foreach ($orderItems as $item) {
+            $date = \Carbon\Carbon::parse($item->order_date);
+            $periodKey = '';
+            $sortKey = '';
+            
+            if ($period == 'day') {
+                $periodKey = $date->format('d/m/Y');
+                $sortKey = $date->format('Y-m-d');
+            } elseif ($period == 'month') {
+                $periodKey = 'Tháng ' . $date->format('m/Y');
+                $sortKey = $date->format('Y-m');
+            } elseif ($period == 'quarter') {
+                $quarter = ceil($date->format('n') / 3);
+                $periodKey = 'Quý ' . $quarter . '/' . $date->format('Y');
+                $sortKey = $date->format('Y') . '-' . $quarter;
+            } elseif ($period == 'year') {
+                $periodKey = 'Năm ' . $date->format('Y');
+                $sortKey = $date->format('Y');
+            }
+
+            if (!isset($grouped[$sortKey])) {
+                $grouped[$sortKey] = [
+                    'period_name' => $periodKey,
+                    'total_revenue' => 0,
+                    'total_sold' => 0,
+                    'products' => []
+                ];
+            }
+
+            $revenue = $item->price * $item->quantity;
+            $grouped[$sortKey]['total_revenue'] += $revenue;
+            $grouped[$sortKey]['total_sold'] += $item->quantity;
+
+            $phoneId = $item->phone_id;
+            if (!isset($grouped[$sortKey]['products'][$phoneId])) {
+                $grouped[$sortKey]['products'][$phoneId] = [
+                    'id' => $phoneId,
+                    'name' => $item->phone ? $item->phone->name : 'Sản phẩm đã xóa',
+                    'image' => $item->phone ? $item->phone->image : null,
+                    'quantity' => 0,
+                    'revenue' => 0,
+                ];
+            }
+            $grouped[$sortKey]['products'][$phoneId]['quantity'] += $item->quantity;
+            $grouped[$sortKey]['products'][$phoneId]['revenue'] += $revenue;
+        }
+
+        // Sắp xếp theo sortKey giảm dần (mới nhất lên đầu)
+        krsort($grouped);
+
+        // Convert grouped products arrays to sorted arrays by revenue descending
+        foreach ($grouped as &$group) {
+            usort($group['products'], function($a, $b) {
+                return $b['revenue'] <=> $a['revenue'];
+            });
+        }
+
+        $stats = array_values($grouped);
+        $phones = Phone::select('id', 'name')->get();
+
+        return view('admin.revenue', compact('stats', 'period', 'productId', 'phones'));
     }
 
     /* ================= PRODUCT ================= */

@@ -19,7 +19,12 @@ class ShopController extends Controller
         $query = Phone::query();
 
         if($request->keyword){
-            $query->where('name','like','%'.$request->keyword.'%');
+            $keyword = $request->keyword;
+            // Tối ưu tìm kiếm bằng text: Tìm theo tên sản phẩm hoặc mô tả (Full-text search cơ bản)
+            $query->where(function($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                  ->orWhere('description', 'like', '%' . $keyword . '%');
+            });
         }
 
         if($request->category){
@@ -34,6 +39,25 @@ class ShopController extends Controller
         return view('user.home', compact(
             'phones','categories','featured','bestSeller'
         ));
+    }
+
+    /**
+     * Tối ưu Full-text Live Search (Gõ là ra ngay)
+     */
+    public function searchAjax(Request $request){
+        $keyword = $request->keyword;
+        
+        if(!$keyword) {
+            return response()->json([]);
+        }
+
+        // Tối ưu tìm kiếm đa trường: Tìm theo cả tên và mô tả
+        $phones = Phone::where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('description', 'like', '%' . $keyword . '%')
+                        ->take(5) // Lấy 5 kết quả đầu tiên cho dropdown
+                        ->get(['id', 'name', 'price', 'image']);
+
+        return response()->json($phones);
     }
 
     public function detail($id){

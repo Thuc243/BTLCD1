@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Đăng ký middleware admin
         $middleware->alias([
             'admin' => \App\Http\Middleware\IsAdmin::class,
+            'shipper' => \App\Http\Middleware\IsShipper::class,
         ]);
 
     })
